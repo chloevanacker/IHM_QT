@@ -21,7 +21,7 @@ public:
 
 public:
     /*Declaration of all the functions linked to the actions*/
-
+//
     void open();
     void save();
     void save_as();
