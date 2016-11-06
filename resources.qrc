@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/assemble.png</file>
+        <file>icons/black_and_white.png</file>
+        <file>icons/open.png</file>
+        <file>icons/redo.png</file>
+        <file>icons/save_as.png</file>
+        <file>icons/save.png</file>
+        <file>icons/undo.png</file>
+    </qresource>
+</RCC>
