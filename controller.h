@@ -1,6 +1,6 @@
 #ifndef Controller_H
 #define Controller_H
-
+// Fichier d'include du controleur
 #include "model.h"
 #include "view.h"
 #include "header.h"
