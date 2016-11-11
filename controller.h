@@ -1,10 +1,11 @@
 #ifndef Controller_H
 #define Controller_H
-// Fichier d'include du controleur
+
 #include "model.h"
 #include "view.h"
 #include "header.h"
 #include "project.h"
+#include "videosurface.h"
 
 class Controller
 {
@@ -21,7 +22,7 @@ public:
 
 public:
     /*Declaration of all the functions linked to the actions*/
-//
+
     void open();
     void save();
     void save_as();

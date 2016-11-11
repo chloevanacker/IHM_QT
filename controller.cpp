@@ -93,10 +93,18 @@ void Controller::convert()
             this->view->display_sub_window(index);
         }
 
-         /*else if(file_name.toLower().endsWith(".avi") || file_name.toLower().endsWith(".mp4"))
-         {
-
-         }*/
+        else if(file_name.toLower().endsWith(".avi") || file_name.toLower().endsWith(".mp4"))
+        {
+            QUrl url = this->videos[index]->media().canonicalUrl();
+            this->videos[index]->stop();
+            delete this->videos[index];
+            QMediaPlayer* video_container = new QMediaPlayer;
+            this->videos[index] = video_container;
+            this->videos[index]->setMedia(url);
+            VideoSurface* video_surface = new VideoSurface;
+            this->videos[index]->setVideoOutput(video_surface);
+            this->videos[index]->play();
+        }
     }
 }
 

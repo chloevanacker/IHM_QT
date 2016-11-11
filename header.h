@@ -20,7 +20,11 @@
 #include <QFile>
 #include <QMediaPlayer>
 #include <QAbstractVideoSurface>
+#include <QAbstractVideoBuffer>
+#include <QVideoSurfaceFormat>
 #include <QVideoWidget>
+#include <QVideoFrame>
+#include <QRect>
 #include <QUrl>
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,5 +34,6 @@ class View;
 class Controller;
 class Model;
 class SubWindow;
+class VideoSurface;
 
 #endif // HEADER_H

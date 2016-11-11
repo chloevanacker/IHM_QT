@@ -5,6 +5,7 @@
 #include "model.h"
 #include "view.h"
 #include "controller.h"
+#include "videosurface.h"
 
 class Project
 {

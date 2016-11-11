@@ -4,6 +4,7 @@
 #include"controller.h"
 #include "header.h"
 #include "project.h"
+#include "videosurface.h"
 
 namespace Ui
 {

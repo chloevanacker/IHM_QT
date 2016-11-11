@@ -16,13 +16,15 @@ SOURCES += main.cpp\
         view.cpp \
         model.cpp \
         controller.cpp \
-        project.cpp
+        project.cpp \
+    videosurface.cpp
 
 HEADERS  += view.h \
             model.h \
             controller.h \
             header.h \
-            project.h
+            project.h \
+    videosurface.h
 
 FORMS    += view.ui
 
