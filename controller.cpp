@@ -1,5 +1,5 @@
 #include "controller.h"
-#include "playitem.h"
+
 
 Controller::Controller()
 {
@@ -152,24 +152,45 @@ void Controller::assemble()
 
     else if(file_name.toLower().endsWith(".avi") || file_name.toLower().endsWith(".mp4"))
     {
-
-        //VideoSurface* video_surface = new VideoSurface(false);
-
-        std::vector <PlayItem> playlist;
+        this->index_of_playlist = 0;
 
         for (unsigned int index = 0; index < this->videos.size(); index ++)
         {
             PlayItem item;
             item.flag_convert = this->video_surfaces[index]->flag_convert;
-            item.url = this->videos[index]->media()->canonicalUrl();
+            item.url = this->videos[index]->media().canonicalUrl();
 
-            playlist.pushback(item);
+            this->videos[index]->stop();
+            this->view->sub_windows[index]->hide();
+            this->playlist.push_back(item);
         }
 
-        for
+        this->videos.erase(this->videos.begin(), this->videos.begin() + this->videos.size());
+        this->video_surfaces.erase(this->video_surfaces.begin(), this->video_surfaces.begin() + this->video_surfaces.size());
+        this->view->sub_windows.erase(this->view->sub_windows.begin(), this->view->sub_windows.begin() + this->view->sub_windows.size());
 
-        //QMediaPlayer::EndOfMedia
 
+        QMediaPlayer* video_player = new QMediaPlayer;
+        this->videos.push_back(video_player);
+        video_player->setMedia(playlist[index_of_playlist].url);
+
+        connect(video_player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), this, SLOT(media_state_changed(QMediaPlayer::MediaStatus)));
+
+        VideoSurface* video_surface = new VideoSurface(false);
+        this->video_surfaces.push_back(video_surface);
+        video_surface->controller = this;
+        video_surface->flag_convert = playlist[index_of_playlist].flag_convert;
+
+        video_player->setVideoOutput(video_surface);
+        video_player->play();
+
+        this->view->add_sub_window();
+        this->view->sub_windows[0]->setWidget(video_surface->frame_container);
+
+        QSize size = video_surface->frame_container->size();
+        this->view->sub_windows[0]->widget()->setFixedSize(size);
+
+        this->view->display_sub_window(0);
     }
 }
 
@@ -214,6 +235,24 @@ void Controller::conversion(QImage* picture)
                 int z = 0;
                 z++;
             }
+        }
+    }
+}
+
+void Controller::media_state_changed(QMediaPlayer::MediaStatus state)
+{
+    if (state == QMediaPlayer::EndOfMedia)
+    {
+        this->index_of_playlist ++;
+        if(this->index_of_playlist != this->playlist.size())
+        {
+            this->videos[0]->setMedia(this->playlist[this->index_of_playlist].url);
+            this->video_surfaces[0]->flag_convert = this->playlist[index_of_playlist].flag_convert;
+            this->videos[0]->play();
+        }
+        else
+        {
+            this->videos[0]->stop();
         }
     }
 }

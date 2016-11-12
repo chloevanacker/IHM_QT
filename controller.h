@@ -6,9 +6,12 @@
 #include "header.h"
 #include "project.h"
 #include "videosurface.h"
+#include "playitem.h"
 
-class Controller
+class Controller : public QObject
 {
+    Q_OBJECT
+
 public:
     Controller();
 
@@ -21,6 +24,8 @@ public:
     std::vector<QMediaPlayer*> videos;
     std::vector<VideoSurface*> video_surfaces;
     std::vector<QImage> videos_frames_pictures;
+    std::vector <PlayItem> playlist;
+    unsigned int index_of_playlist;
 
 public:
     /*Declaration of all the functions linked to the actions*/
@@ -35,6 +40,9 @@ public:
     void help();
     void about();
     void conversion(QImage* picture);
+
+public slots:
+    void media_state_changed(QMediaPlayer::MediaStatus state);
 };
 
 #endif // Controller_H
