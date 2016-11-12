@@ -285,3 +285,9 @@ void View::display_sub_window(int index_of_sub_window)
     this->sub_windows[index_of_sub_window]->show();
     this->sub_windows[index_of_sub_window]->adjustSize();
 }
+
+
+void View::hide_sub_window(int index_of_sub_window)
+{
+    this->sub_windows[index_of_sub_window]->hide();
+}

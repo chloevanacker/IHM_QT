@@ -20,19 +20,23 @@ void Model::load_file(QString file_name)
 
      else if(file_name.toLower().endsWith(".avi") || file_name.toLower().endsWith(".mp4"))
      {
-        QVideoWidget* video_container = new QVideoWidget;
+        bool flag_convert = false;
+
         QMediaPlayer* video_player = new QMediaPlayer;
         this->controller->videos.push_back(video_player);
         video_player->setMedia(QUrl::fromLocalFile(file_name));
-        video_player->setVideoOutput(video_container);
-        video_player->state();
-        video_player->mediaStatus();
-        this->controller->view->sub_windows[index_of_new_sub_window]->setWidget(video_container);
-        this->controller->view->sub_windows[index_of_new_sub_window]->setAccessibleName(file_name);
-        QSize size= video_container->size();
-        this->controller->view->sub_windows[index_of_new_sub_window]->widget()->setFixedSize(size);
-        video_player->play();
 
+        VideoSurface* video_surface = new VideoSurface(flag_convert);
+        this->controller->video_surfaces.push_back(video_surface);
+        video_surface->controller = this->controller;
+        video_player->setVideoOutput(video_surface);
+
+        video_player->play();
+        this->controller->view->sub_windows[index_of_new_sub_window]->setWidget(video_surface->frame_container);
+        this->controller->view->sub_windows[index_of_new_sub_window]->setAccessibleName(file_name);
+
+        QSize size = video_surface->frame_container->size();
+        this->controller->view->sub_windows[index_of_new_sub_window]->widget()->setFixedSize(size);
      }
 }
 

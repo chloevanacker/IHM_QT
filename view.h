@@ -38,6 +38,7 @@ public:
     QString display_save_as_box();
     void add_sub_window();
     void display_sub_window(int index_of_sub_window);
+    void hide_sub_window(int index_of_sub_window);
 
 
 /*Declaration of all the actions attributes, and of the function that create these actions */

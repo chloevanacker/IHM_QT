@@ -1,4 +1,5 @@
 #include "controller.h"
+#include "playitem.h"
 
 Controller::Controller()
 {
@@ -68,23 +69,7 @@ void Controller::convert()
         {
             QImage picture = this->pixmaps[index]->toImage();
 
-            for (int height = 0; height < picture.height(); height++)
-            {
-                uchar* scan = picture.scanLine(height);
-                int depth = 4;
-                for (int width = 0; width < picture.width(); width ++)
-                {
-                    QRgb* rgb_pixels = reinterpret_cast<QRgb*>(scan+ width*depth);
-                    int gray = qGray (*rgb_pixels);
-                    *rgb_pixels = QColor(gray, gray, gray).rgba();
-                    picture.setPixel(width, height, *rgb_pixels);
-                    if (gray)
-                    {
-                        int z = 0;
-                        z++;
-                    }
-                }
-            }
+            this->conversion(&picture);
 
             QLabel* picture_container = new QLabel;
             *(this->pixmaps[index]) = this->pixmaps[index]->fromImage(picture);
@@ -95,70 +80,97 @@ void Controller::convert()
 
         else if(file_name.toLower().endsWith(".avi") || file_name.toLower().endsWith(".mp4"))
         {
-            QUrl url = this->videos[index]->media().canonicalUrl();
-            this->videos[index]->stop();
-            delete this->videos[index];
-            QMediaPlayer* video_container = new QMediaPlayer;
-            this->videos[index] = video_container;
-            this->videos[index]->setMedia(url);
-            VideoSurface* video_surface = new VideoSurface;
-            this->videos[index]->setVideoOutput(video_surface);
-            this->videos[index]->play();
+            this->video_surfaces[index]->flag_convert = true;
         }
     }
 }
 
 void Controller::assemble()
 {
+    //Les fichiers ouverts ne sont que des videos ou que des photos
+    QString file_name = this->view->sub_windows[0]->accessibleName();
 
-    int max_height=this->view->sub_windows.at(0)->pos().ry()+pixmaps.at(0)->height();
-    int max_width=this->view->sub_windows.at(0)->pos().rx()+pixmaps.at(0)->width();
-
-    for(unsigned int i=1; i < pixmaps.size(); i++)
+    if(file_name.toLower().endsWith(".png") || file_name.toLower().endsWith(".jpg") || file_name.toLower().endsWith(".jpeg"))
     {
-        if(this->view->sub_windows.at(i)->pos().ry()+pixmaps.at(i)->height()>max_height)
-            max_height=this->view->sub_windows.at(i)->pos().ry()+pixmaps.at(i)->height();
+        int max_height=this->view->sub_windows.at(0)->pos().ry()+pixmaps.at(0)->height();
+        int max_width=this->view->sub_windows.at(0)->pos().rx()+pixmaps.at(0)->width();
 
-        if(this->view->sub_windows.at(i)->pos().rx()>max_width  || this->view->sub_windows.at(i)->pos().rx()+pixmaps.at(i)->width()>max_width)
-            max_width=this->view->sub_windows.at(i)->pos().rx()+pixmaps.at(i)->width();
+        for(unsigned int i=1; i < this->pixmaps.size(); i++)
+        {
+            if(this->view->sub_windows.at(i)->pos().ry()+this->pixmaps.at(i)->height()>max_height)
+                max_height=this->view->sub_windows.at(i)->pos().ry()+this->pixmaps.at(i)->height();
+
+            if(this->view->sub_windows.at(i)->pos().rx()>max_width  || this->view->sub_windows.at(i)->pos().rx()+this->pixmaps.at(i)->width()>max_width)
+                max_width=this->view->sub_windows.at(i)->pos().rx()+this->pixmaps.at(i)->width();
+        }
+
+        int min_height=this->view->sub_windows.at(0)->pos().ry();
+        int min_width=this->view->sub_windows.at(0)->pos().rx();
+
+        for( unsigned int i=1; i < this->pixmaps.size(); i++)
+        {
+            if(this->view->sub_windows.at(i)->pos().ry()<min_height)
+                        min_height=this->view->sub_windows.at(i)->pos().ry();
+
+            if(this->view->sub_windows.at(i)->pos().rx()<min_width)
+                        min_width=this->view->sub_windows.at(i)->pos().rx();
+        }
+
+        QImage result_image(max_width-min_width, max_height-min_height, QImage::Format_RGB32);
+        QPainter painter;
+
+        painter.begin(&result_image);
+
+        for(unsigned int i=0; i < this->pixmaps.size(); ++i)
+        {
+            painter.drawImage(this->view->sub_windows.at(i)->pos().rx()-min_width, this->view->sub_windows.at(i)->pos().ry()-min_height, this->pixmaps.at(i)->toImage(), 0, 0, max_width-min_width, max_height-min_height, Qt::AutoColor);
+        }
+        painter.end();
+
+        QLabel* result_container = new QLabel;
+
+        this->pixmaps.erase(this->pixmaps.begin(), this->pixmaps.begin() + this->pixmaps.size());
+
+        for (unsigned int index = 0; index < this->view->sub_windows.size(); index ++)
+        {
+            this->view->hide_sub_window(index);
+        }
+
+        this->view->sub_windows.erase(this->view->sub_windows.begin(), this->view->sub_windows.begin() + this->view->sub_windows.size());
+
+        QPixmap pixmap = pixmap.fromImage(result_image);
+
+        this->pixmaps.push_back(&pixmap);
+
+        this->view->add_sub_window();
+
+        result_container->setPixmap(*this->pixmaps[pixmaps.size()-1]);
+        this->view->sub_windows[0]->setWidget(result_container);
+
+        this->view->display_sub_window(0);
     }
 
-    int min_height=this->view->sub_windows.at(0)->pos().ry();
-    int min_width=this->view->sub_windows.at(0)->pos().rx();
-
-    for( unsigned int i=1; i < pixmaps.size(); i++)
-    {
-        if(this->view->sub_windows.at(i)->pos().ry()<min_height)
-                    min_height=this->view->sub_windows.at(i)->pos().ry();
-
-        if(this->view->sub_windows.at(i)->pos().rx()<min_width)
-                    min_width=this->view->sub_windows.at(i)->pos().rx();
-    }
-
-    QImage resultImage(max_width-min_width, max_height-min_height, QImage::Format_RGB32);
-    QPainter painter;
-
-    painter.begin(&resultImage);
-
-    for(unsigned int i=0; i < pixmaps.size(); ++i)
+    else if(file_name.toLower().endsWith(".avi") || file_name.toLower().endsWith(".mp4"))
     {
 
-            painter.drawImage(this->view->sub_windows.at(i)->pos().rx()-min_width, this->view->sub_windows.at(i)->pos().ry()-min_height, pixmaps.at(i)->toImage(), 0, 0, max_width-min_width, max_height-min_height, Qt::AutoColor);
+        //VideoSurface* video_surface = new VideoSurface(false);
+
+        std::vector <PlayItem> playlist;
+
+        for (unsigned int index = 0; index < this->videos.size(); index ++)
+        {
+            PlayItem item;
+            item.flag_convert = this->video_surfaces[index]->flag_convert;
+            item.url = this->videos[index]->media()->canonicalUrl();
+
+            playlist.pushback(item);
+        }
+
+        for
+
+        //QMediaPlayer::EndOfMedia
 
     }
-    painter.end();
-
-    //ATTENTION supprime la dernière fenetre
-    QLabel* resultcontainer = new QLabel;
-
-    *(this->pixmaps[pixmaps.size()-1]) = this->pixmaps[pixmaps.size()-1]->fromImage(resultImage);
-    resultcontainer->setPixmap(*this->pixmaps[pixmaps.size()-1]);
-    this->view->sub_windows[pixmaps.size()-1]->setWidget(resultcontainer);
-    this->view->sub_windows[pixmaps.size()-1]->adjustSize();
-    this->view->sub_windows[pixmaps.size()-1]->maximumSize();
-    this->view->sub_windows[pixmaps.size()-1]->show();
-
-
 }
 
 void Controller::undo()
@@ -183,4 +195,25 @@ void Controller::about()
     QString title = "About";
     QString content = "Project made by NICOL Pauline, SERVOIN Arnaud, VANACKER Chloé.";
     this->view->display_message_box(title, content);
+}
+
+void Controller::conversion(QImage* picture)
+{
+    for (int height = 0; height < picture->height(); height++)
+    {
+        uchar* scan = picture->scanLine(height);
+        int depth = 4;
+        for (int width = 0; width < picture->width(); width ++)
+        {
+            QRgb* rgb_pixels = reinterpret_cast<QRgb*>(scan+ width*depth);
+            int gray = qGray (*rgb_pixels);
+            *rgb_pixels = QColor(gray, gray, gray).rgba();
+            picture->setPixel(width, height, *rgb_pixels);
+            if (gray)
+            {
+                int z = 0;
+                z++;
+            }
+        }
+    }
 }

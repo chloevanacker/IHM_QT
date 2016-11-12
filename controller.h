@@ -19,6 +19,8 @@ public:
 public:
     std::vector<QPixmap*> pixmaps;
     std::vector<QMediaPlayer*> videos;
+    std::vector<VideoSurface*> video_surfaces;
+    std::vector<QImage> videos_frames_pictures;
 
 public:
     /*Declaration of all the functions linked to the actions*/
@@ -32,6 +34,7 @@ public:
     void redo();
     void help();
     void about();
+    void conversion(QImage* picture);
 };
 
 #endif // Controller_H

@@ -24,7 +24,8 @@ HEADERS  += view.h \
             controller.h \
             header.h \
             project.h \
-    videosurface.h
+    videosurface.h \
+    playitem.h
 
 FORMS    += view.ui
 

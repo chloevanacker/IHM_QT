@@ -11,15 +11,14 @@
 class VideoSurface : public QAbstractVideoSurface
 {
 public:
-    VideoSurface();
+    VideoSurface(bool flag_convert);
     ~VideoSurface();
 
-    QImage::Format imageFormat;
-    QPixmap imageCaptured;
-    QRect targetRect;
-    QRect sourceRect;
-    QVideoFrame currentFrame;
-    QLabel* mylabel;
+    QImage::Format image_format;
+    QLabel* frame_container;
+    bool flag_convert;
+
+    Controller* controller;
 
     QList<QVideoFrame::PixelFormat> supportedPixelFormats (QAbstractVideoBuffer::HandleType handle_type) const;
 

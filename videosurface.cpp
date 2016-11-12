@@ -1,8 +1,9 @@
 #include "videosurface.h"
 
-VideoSurface::VideoSurface()
+VideoSurface::VideoSurface(bool flag_convert)
 {
-    mylabel = new QLabel;
+    this->flag_convert = flag_convert;
+    frame_container = new QLabel;
 
 }
 
@@ -39,39 +40,26 @@ bool VideoSurface::present(const QVideoFrame & video_frame)
        return false;
     }
 
-     //this is a shallow operation. it just refer the frame buffer
-    QImage picture(frametodraw.bits(), frametodraw.width(), frametodraw.height(), frametodraw.bytesPerLine(),
+    //this is a shallow operation. it just refer the frame buffer
+    QImage picture (frametodraw.bits(), frametodraw.width(), frametodraw.height(), frametodraw.bytesPerLine(),
                  video_frame.imageFormatFromPixelFormat(video_frame.pixelFormat()));
 
-    for (int height = 0; height < picture.height(); height++)
+    if (this->flag_convert == true)
     {
-        uchar* scan = picture.scanLine(height);
-        int depth = 4;
-        for (int width = 0; width < picture.width(); width ++)
-        {
-            QRgb* rgb_pixels = reinterpret_cast<QRgb*>(scan+ width*depth);
-            int gray = qGray (*rgb_pixels);
-            *rgb_pixels = QColor(gray, gray, gray).rgba();
-            picture.setPixel(width, height, *rgb_pixels);
-            if (gray)
-            {
-                int z = 0;
-                z++;
-            }
-        }
+        this->controller->conversion(&picture);
     }
 
-    mylabel->resize(picture.size());
+    frame_container->resize(picture.size());
 
     //QPixmap::fromImage create a new buffer for the pixmap
-    mylabel->setPixmap(QPixmap::fromImage(picture));
+    frame_container->setPixmap(QPixmap::fromImage(picture));
 
     //we can release the data
     frametodraw.unmap();
 
-    mylabel->update();
+    //frame_container->update();
 
-    mylabel->show();
+    //frame_container->show();
 
     return true;
 
@@ -80,12 +68,12 @@ bool VideoSurface::present(const QVideoFrame & video_frame)
 
 bool VideoSurface::start(const QVideoSurfaceFormat &format)
 {
-    const QImage::Format imageFormat = QVideoFrame::imageFormatFromPixelFormat(format.pixelFormat());
+    const QImage::Format image_format = QVideoFrame::imageFormatFromPixelFormat(format.pixelFormat());
     const QSize size = format.frameSize();
 
-    if (imageFormat != QImage::Format_Invalid && !size.isEmpty())
+    if (image_format != QImage::Format_Invalid && !size.isEmpty())
     {
-        this->imageFormat = imageFormat;
+        this->image_format = image_format;
         QAbstractVideoSurface::start(format);
         return true;
     }

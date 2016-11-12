@@ -26,6 +26,7 @@
 #include <QVideoFrame>
 #include <QRect>
 #include <QUrl>
+#include <QPoint>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -35,5 +36,6 @@ class Controller;
 class Model;
 class SubWindow;
 class VideoSurface;
+struct Playlist;
 
 #endif // HEADER_H
