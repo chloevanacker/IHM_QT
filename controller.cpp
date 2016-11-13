@@ -1,6 +1,7 @@
 #include "controller.h"
 
 
+
 Controller::Controller()
 {
 
@@ -63,36 +64,69 @@ void Controller::convert()
 
     int number_of_sub_windows = this->view->sub_windows.size();
 
-    //creation des threads
-    for(int i=0; i<number_of_sub_windows;i++)
+    std::vector <QString> file_names;
+
+    for (int index = 0; index < number_of_sub_windows; index ++)
     {
-       ConvertImageThread* new_thread_convert= new ConvertImageThread();
-       vector_threads.push_back(new_thread_convert);
-
-       QImage im=this->pixmaps[i]->toImage();
-       this->vector_threads[i]->result=im;
-
+        file_names.push_back(this->view->sub_windows[index]->accessibleName());
     }
 
-     //on lance les threads
-    for(int index=0; index<number_of_sub_windows; index++)
-     {
-           this->vector_threads[index]->start();
+    //creation des threads
+    for(int index =0; index <number_of_sub_windows;index++)
+    {
 
-     }
+        if(file_names[index].toLower().endsWith(".png") || file_names[index].toLower().endsWith(".jpg") || file_names[index].toLower().endsWith(".jpeg"))
+        {
+           ConvertImageThread* new_thread_convert_image= new ConvertImageThread();
+           this->vector_threads_images.push_back(new_thread_convert_image);
 
+           QImage image =this->pixmaps[index]->toImage();
+           this->vector_threads_images[index]->result = image;
 
-    for(int index=0; index<number_of_sub_windows; index++)
-     {
-        this->vector_threads[index]->wait();//on attend que les threads finissent
+        }
+        else if(file_names[index].toLower().endsWith(".avi") || file_names[index].toLower().endsWith(".mp4"))
+        {
+            ConvertVideoThread* new_thread_convert_video = new ConvertVideoThread(NULL, this, this->videos[index], this->video_surfaces[index]);
+            this->vector_threads_videos.push_back(new_thread_convert_video);
 
-
-        QLabel* picture_container = new QLabel;
-        *(this->pixmaps[index]) = QPixmap::fromImage(this->vector_threads[index]->result);
-        picture_container->setPixmap(*this->pixmaps[index]);
-        this->view->sub_windows[index]->setWidget(picture_container);
-        this->view->display_sub_window(index);
+            this->vector_threads_videos[index]->controller = this;
+            this->vector_threads_videos[index]->video_player = this->videos[index];
+            this->vector_threads_videos[index]->video_surface = this->video_surfaces[index];
+        }
     }
+
+    //on lance les threads
+    for(int index=0; index<number_of_sub_windows; index++)
+    {
+        if(file_names[index].toLower().endsWith(".png") || file_names[index].toLower().endsWith(".jpg") || file_names[index].toLower().endsWith(".jpeg"))
+        {
+           this->vector_threads_images[index]->start();
+
+        }
+        else if(file_names[index].toLower().endsWith(".avi") || file_names[index].toLower().endsWith(".mp4"))
+        {
+            this->vector_threads_videos[index]->start();
+        }
+    }
+
+
+    for(int index=0; index<number_of_sub_windows; index++)
+    {
+        if(file_names[index].toLower().endsWith(".png") || file_names[index].toLower().endsWith(".jpg") || file_names[index].toLower().endsWith(".jpeg"))
+        {
+            this->vector_threads_images[index]->wait();//on attend que les threads finissent
+            QLabel* picture_container = new QLabel;
+            *(this->pixmaps[index]) = QPixmap::fromImage(this->vector_threads_images[index]->result);
+            picture_container->setPixmap(*this->pixmaps[index]);
+            this->view->sub_windows[index]->setWidget(picture_container);
+            this->view->display_sub_window(index);
+        }
+        else if(file_names[index].toLower().endsWith(".avi") || file_names[index].toLower().endsWith(".mp4"))
+        {
+            this->vector_threads_videos[index]->wait();
+        }
+    }
+
 
 //    int number_of_sub_windows = this->view->sub_windows.size();
 //    for(int index = 0; index < number_of_sub_windows; index++)

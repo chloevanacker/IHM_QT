@@ -18,7 +18,8 @@ SOURCES += main.cpp\
         controller.cpp \
         project.cpp \
     videosurface.cpp \
-    convertimagethread.cpp
+    convertimagethread.cpp \
+    convertvideothread.cpp
 
 HEADERS  += view.h \
             model.h \
@@ -27,7 +28,8 @@ HEADERS  += view.h \
             project.h \
     videosurface.h \
     playitem.h \
-    convertimagethread.h
+    convertimagethread.h \
+    convertvideothread.h
 
 FORMS    += view.ui
 

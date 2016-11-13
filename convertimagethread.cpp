@@ -29,8 +29,7 @@ void ConvertImageThread::run( )
             }
 
         }
-
-       }
+    }
 
 
 

@@ -24,7 +24,6 @@
 #include <QVideoSurfaceFormat>
 #include <QVideoWidget>
 #include <QVideoFrame>
-#include <QRect>
 #include <QUrl>
 #include <QPoint>
 #include <QThread>
@@ -39,5 +38,6 @@ class SubWindow;
 class VideoSurface;
 struct Playlist;
 class ConvertImageThread;
+class ConvertVideoThread;
 
 #endif // HEADER_H
