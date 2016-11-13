@@ -49,15 +49,21 @@ SOURCES       = main.cpp \
 		view.cpp \
 		model.cpp \
 		controller.cpp \
-		project.cpp qrc_resources.cpp \
-		moc_view.cpp
+		project.cpp \
+		videosurface.cpp \
+		convertimagethread.cpp qrc_resources.cpp \
+		moc_view.cpp \
+		moc_controller.cpp
 OBJECTS       = main.o \
 		view.o \
 		model.o \
 		controller.o \
 		project.o \
+		videosurface.o \
+		convertimagethread.o \
 		qrc_resources.o \
-		moc_view.o
+		moc_view.o \
+		moc_controller.o
 DIST          = /usr/lib/i386-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/i386-linux-gnu/qt5/mkspecs/common/shell-unix.conf \
 		/usr/lib/i386-linux-gnu/qt5/mkspecs/common/unix.conf \
@@ -361,7 +367,7 @@ qmake_all: FORCE
 
 dist: 
 	@test -d .tmp/Project1.0.0 || mkdir -p .tmp/Project1.0.0
-	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/Project1.0.0/ && $(COPY_FILE) --parents resources.qrc .tmp/Project1.0.0/ && $(COPY_FILE) --parents view.h model.h controller.h header.h project.h .tmp/Project1.0.0/ && $(COPY_FILE) --parents main.cpp view.cpp model.cpp controller.cpp project.cpp .tmp/Project1.0.0/ && $(COPY_FILE) --parents view.ui .tmp/Project1.0.0/ && (cd `dirname .tmp/Project1.0.0` && $(TAR) Project1.0.0.tar Project1.0.0 && $(COMPRESS) Project1.0.0.tar) && $(MOVE) `dirname .tmp/Project1.0.0`/Project1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/Project1.0.0
+	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/Project1.0.0/ && $(COPY_FILE) --parents resources.qrc .tmp/Project1.0.0/ && $(COPY_FILE) --parents view.h model.h controller.h header.h project.h videosurface.h playitem.h convertimagethread.h .tmp/Project1.0.0/ && $(COPY_FILE) --parents main.cpp view.cpp model.cpp controller.cpp project.cpp videosurface.cpp convertimagethread.cpp .tmp/Project1.0.0/ && $(COPY_FILE) --parents view.ui .tmp/Project1.0.0/ && (cd `dirname .tmp/Project1.0.0` && $(TAR) Project1.0.0.tar Project1.0.0 && $(COMPRESS) Project1.0.0.tar) && $(MOVE) `dirname .tmp/Project1.0.0`/Project1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/Project1.0.0
 
 
 clean:compiler_clean 
@@ -386,20 +392,18 @@ compiler_rcc_make_all: qrc_resources.cpp
 compiler_rcc_clean:
 	-$(DEL_FILE) qrc_resources.cpp
 qrc_resources.cpp: resources.qrc \
-		images/saveas.png \
-		images/paste.png \
-		images/new.png \
-		images/copy.png \
-		images/B&w.png \
-		images/patchwork.png \
-		images/save.png \
-		images/cut.png \
-		images/open.png
+		icons/save_as.png \
+		icons/undo.png \
+		icons/redo.png \
+		icons/black_and_white.png \
+		icons/open.png \
+		icons/save.png \
+		icons/assemble.png
 	/usr/lib/i386-linux-gnu/qt5/bin/rcc -name resources resources.qrc -o qrc_resources.cpp
 
-compiler_moc_header_make_all: moc_view.cpp
+compiler_moc_header_make_all: moc_view.cpp moc_controller.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_view.cpp
+	-$(DEL_FILE) moc_view.cpp moc_controller.cpp
 moc_view.cpp: controller.h \
 		model.h \
 		view.h \
@@ -570,13 +574,213 @@ moc_view.cpp: controller.h \
 		/usr/include/qt5/QtMultimedia/qabstractvideosurface.h \
 		/usr/include/qt5/QtMultimedia/qvideoframe.h \
 		/usr/include/qt5/QtMultimedia/qabstractvideobuffer.h \
+		/usr/include/qt5/QtMultimedia/QAbstractVideoBuffer \
+		/usr/include/qt5/QtMultimedia/QVideoSurfaceFormat \
+		/usr/include/qt5/QtMultimedia/qvideosurfaceformat.h \
 		/usr/include/qt5/QtMultimediaWidgets/QVideoWidget \
 		/usr/include/qt5/QtMultimediaWidgets/qvideowidget.h \
 		/usr/include/qt5/QtMultimediaWidgets/qtmultimediawidgetdefs.h \
 		/usr/include/qt5/QtMultimedia/qmediabindableinterface.h \
+		/usr/include/qt5/QtMultimedia/QVideoFrame \
+		/usr/include/qt5/QtCore/QRect \
+		/usr/include/qt5/QtCore/QPoint \
+		/usr/include/qt5/QtCore/QThread \
+		/usr/include/qt5/QtCore/qthread.h \
 		project.h \
+		videosurface.h \
+		playitem.h \
+		convertimagethread.h \
 		view.h
 	/usr/lib/i386-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/i386-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/i686-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/i686-linux-gnu/4.8/include-fixed -I/usr/include/i386-linux-gnu -I/usr/include view.h -o moc_view.cpp
+
+moc_controller.cpp: model.h \
+		view.h \
+		controller.h \
+		header.h \
+		/usr/include/qt5/QtWidgets/QMainWindow \
+		/usr/include/qt5/QtWidgets/qmainwindow.h \
+		/usr/include/qt5/QtWidgets/qwidget.h \
+		/usr/include/qt5/QtGui/qwindowdefs.h \
+		/usr/include/qt5/QtCore/qglobal.h \
+		/usr/include/qt5/QtCore/qconfig.h \
+		/usr/include/qt5/QtCore/qfeatures.h \
+		/usr/include/qt5/QtCore/qsystemdetection.h \
+		/usr/include/qt5/QtCore/qprocessordetection.h \
+		/usr/include/qt5/QtCore/qcompilerdetection.h \
+		/usr/include/qt5/QtCore/qglobalstatic.h \
+		/usr/include/qt5/QtCore/qatomic.h \
+		/usr/include/qt5/QtCore/qbasicatomic.h \
+		/usr/include/qt5/QtCore/qatomic_bootstrap.h \
+		/usr/include/qt5/QtCore/qgenericatomic.h \
+		/usr/include/qt5/QtCore/qatomic_msvc.h \
+		/usr/include/qt5/QtCore/qatomic_integrity.h \
+		/usr/include/qt5/QtCore/qoldbasicatomic.h \
+		/usr/include/qt5/QtCore/qatomic_vxworks.h \
+		/usr/include/qt5/QtCore/qatomic_power.h \
+		/usr/include/qt5/QtCore/qatomic_alpha.h \
+		/usr/include/qt5/QtCore/qatomic_armv7.h \
+		/usr/include/qt5/QtCore/qatomic_armv6.h \
+		/usr/include/qt5/QtCore/qatomic_armv5.h \
+		/usr/include/qt5/QtCore/qatomic_bfin.h \
+		/usr/include/qt5/QtCore/qatomic_ia64.h \
+		/usr/include/qt5/QtCore/qatomic_mips.h \
+		/usr/include/qt5/QtCore/qatomic_s390.h \
+		/usr/include/qt5/QtCore/qatomic_sh4a.h \
+		/usr/include/qt5/QtCore/qatomic_sparc.h \
+		/usr/include/qt5/QtCore/qatomic_gcc.h \
+		/usr/include/qt5/QtCore/qatomic_x86.h \
+		/usr/include/qt5/QtCore/qatomic_cxx11.h \
+		/usr/include/qt5/QtCore/qatomic_unix.h \
+		/usr/include/qt5/QtCore/qmutex.h \
+		/usr/include/qt5/QtCore/qlogging.h \
+		/usr/include/qt5/QtCore/qflags.h \
+		/usr/include/qt5/QtCore/qtypeinfo.h \
+		/usr/include/qt5/QtCore/qtypetraits.h \
+		/usr/include/qt5/QtCore/qsysinfo.h \
+		/usr/include/qt5/QtCore/qobjectdefs.h \
+		/usr/include/qt5/QtCore/qnamespace.h \
+		/usr/include/qt5/QtCore/qobjectdefs_impl.h \
+		/usr/include/qt5/QtGui/qwindowdefs_win.h \
+		/usr/include/qt5/QtCore/qobject.h \
+		/usr/include/qt5/QtCore/qstring.h \
+		/usr/include/qt5/QtCore/qchar.h \
+		/usr/include/qt5/QtCore/qbytearray.h \
+		/usr/include/qt5/QtCore/qrefcount.h \
+		/usr/include/qt5/QtCore/qarraydata.h \
+		/usr/include/qt5/QtCore/qstringbuilder.h \
+		/usr/include/qt5/QtCore/qlist.h \
+		/usr/include/qt5/QtCore/qalgorithms.h \
+		/usr/include/qt5/QtCore/qiterator.h \
+		/usr/include/qt5/QtCore/qcoreevent.h \
+		/usr/include/qt5/QtCore/qscopedpointer.h \
+		/usr/include/qt5/QtCore/qmetatype.h \
+		/usr/include/qt5/QtCore/qvarlengtharray.h \
+		/usr/include/qt5/QtCore/qcontainerfwd.h \
+		/usr/include/qt5/QtCore/qisenum.h \
+		/usr/include/qt5/QtCore/qobject_impl.h \
+		/usr/include/qt5/QtCore/qmargins.h \
+		/usr/include/qt5/QtCore/qrect.h \
+		/usr/include/qt5/QtCore/qsize.h \
+		/usr/include/qt5/QtCore/qpoint.h \
+		/usr/include/qt5/QtGui/qpaintdevice.h \
+		/usr/include/qt5/QtGui/qpalette.h \
+		/usr/include/qt5/QtGui/qcolor.h \
+		/usr/include/qt5/QtGui/qrgb.h \
+		/usr/include/qt5/QtCore/qstringlist.h \
+		/usr/include/qt5/QtCore/qdatastream.h \
+		/usr/include/qt5/QtCore/qiodevice.h \
+		/usr/include/qt5/QtCore/qpair.h \
+		/usr/include/qt5/QtCore/qregexp.h \
+		/usr/include/qt5/QtCore/qstringmatcher.h \
+		/usr/include/qt5/QtGui/qbrush.h \
+		/usr/include/qt5/QtCore/qvector.h \
+		/usr/include/qt5/QtGui/qmatrix.h \
+		/usr/include/qt5/QtGui/qpolygon.h \
+		/usr/include/qt5/QtGui/qregion.h \
+		/usr/include/qt5/QtCore/qline.h \
+		/usr/include/qt5/QtGui/qtransform.h \
+		/usr/include/qt5/QtGui/qpainterpath.h \
+		/usr/include/qt5/QtGui/qimage.h \
+		/usr/include/qt5/QtGui/qpixmap.h \
+		/usr/include/qt5/QtCore/qsharedpointer.h \
+		/usr/include/qt5/QtCore/qshareddata.h \
+		/usr/include/qt5/QtCore/qsharedpointer_impl.h \
+		/usr/include/qt5/QtCore/qhash.h \
+		/usr/include/qt5/QtGui/qfont.h \
+		/usr/include/qt5/QtGui/qfontmetrics.h \
+		/usr/include/qt5/QtGui/qfontinfo.h \
+		/usr/include/qt5/QtWidgets/qsizepolicy.h \
+		/usr/include/qt5/QtGui/qcursor.h \
+		/usr/include/qt5/QtGui/qkeysequence.h \
+		/usr/include/qt5/QtGui/qevent.h \
+		/usr/include/qt5/QtCore/qvariant.h \
+		/usr/include/qt5/QtCore/qmap.h \
+		/usr/include/qt5/QtCore/qdebug.h \
+		/usr/include/qt5/QtCore/qtextstream.h \
+		/usr/include/qt5/QtCore/qlocale.h \
+		/usr/include/qt5/QtCore/qset.h \
+		/usr/include/qt5/QtCore/qcontiguouscache.h \
+		/usr/include/qt5/QtCore/qurl.h \
+		/usr/include/qt5/QtCore/qurlquery.h \
+		/usr/include/qt5/QtCore/qfile.h \
+		/usr/include/qt5/QtCore/qfiledevice.h \
+		/usr/include/qt5/QtGui/qvector2d.h \
+		/usr/include/qt5/QtGui/qtouchdevice.h \
+		/usr/include/qt5/QtWidgets/qtabwidget.h \
+		/usr/include/qt5/QtGui/qicon.h \
+		/usr/include/qt5/QtWidgets/QMenu \
+		/usr/include/qt5/QtWidgets/qmenu.h \
+		/usr/include/qt5/QtWidgets/qaction.h \
+		/usr/include/qt5/QtWidgets/qactiongroup.h \
+		/usr/include/qt5/QtWidgets/QMenuBar \
+		/usr/include/qt5/QtWidgets/qmenubar.h \
+		/usr/include/qt5/QtWidgets/QPushButton \
+		/usr/include/qt5/QtWidgets/qpushbutton.h \
+		/usr/include/qt5/QtWidgets/qabstractbutton.h \
+		/usr/include/qt5/QtWidgets/QLabel \
+		/usr/include/qt5/QtWidgets/qlabel.h \
+		/usr/include/qt5/QtWidgets/qframe.h \
+		/usr/include/qt5/QtWidgets/QMessageBox \
+		/usr/include/qt5/QtWidgets/qmessagebox.h \
+		/usr/include/qt5/QtWidgets/qdialog.h \
+		/usr/include/qt5/QtWidgets/QToolBar \
+		/usr/include/qt5/QtWidgets/qtoolbar.h \
+		/usr/include/qt5/QtWidgets/QAction \
+		/usr/include/qt5/QtWidgets/QMdiArea \
+		/usr/include/qt5/QtWidgets/qmdiarea.h \
+		/usr/include/qt5/QtWidgets/qabstractscrollarea.h \
+		/usr/include/qt5/QtWidgets/QMdiSubWindow \
+		/usr/include/qt5/QtWidgets/qmdisubwindow.h \
+		/usr/include/qt5/QtCore/QSignalMapper \
+		/usr/include/qt5/QtCore/qsignalmapper.h \
+		/usr/include/qt5/QtWidgets/QFileDialog \
+		/usr/include/qt5/QtWidgets/qfiledialog.h \
+		/usr/include/qt5/QtCore/qdir.h \
+		/usr/include/qt5/QtCore/qfileinfo.h \
+		/usr/include/qt5/QtGui/QPixmap \
+		/usr/include/qt5/QtGui/QPainter \
+		/usr/include/qt5/QtGui/qpainter.h \
+		/usr/include/qt5/QtGui/qtextoption.h \
+		/usr/include/qt5/QtGui/qpen.h \
+		/usr/include/qt5/QtCore/QString \
+		/usr/include/qt5/QtGui/QRgb \
+		/usr/include/qt5/QtCore/QFile \
+		/usr/include/qt5/QtMultimedia/QMediaPlayer \
+		/usr/include/qt5/QtMultimedia/qmediaplayer.h \
+		/usr/include/qt5/QtMultimedia/qmediaobject.h \
+		/usr/include/qt5/QtMultimedia/qtmultimediadefs.h \
+		/usr/include/qt5/QtMultimedia/qmultimedia.h \
+		/usr/include/qt5/QtMultimedia/qmediacontent.h \
+		/usr/include/qt5/QtMultimedia/qmediaresource.h \
+		/usr/include/qt5/QtNetwork/qnetworkrequest.h \
+		/usr/include/qt5/QtCore/QSharedDataPointer \
+		/usr/include/qt5/QtCore/QUrl \
+		/usr/include/qt5/QtCore/QVariant \
+		/usr/include/qt5/QtMultimedia/qmediaenumdebug.h \
+		/usr/include/qt5/QtCore/qmetaobject.h \
+		/usr/include/qt5/QtNetwork/qnetworkconfiguration.h \
+		/usr/include/qt5/QtMultimedia/QAbstractVideoSurface \
+		/usr/include/qt5/QtMultimedia/qabstractvideosurface.h \
+		/usr/include/qt5/QtMultimedia/qvideoframe.h \
+		/usr/include/qt5/QtMultimedia/qabstractvideobuffer.h \
+		/usr/include/qt5/QtMultimedia/QAbstractVideoBuffer \
+		/usr/include/qt5/QtMultimedia/QVideoSurfaceFormat \
+		/usr/include/qt5/QtMultimedia/qvideosurfaceformat.h \
+		/usr/include/qt5/QtMultimediaWidgets/QVideoWidget \
+		/usr/include/qt5/QtMultimediaWidgets/qvideowidget.h \
+		/usr/include/qt5/QtMultimediaWidgets/qtmultimediawidgetdefs.h \
+		/usr/include/qt5/QtMultimedia/qmediabindableinterface.h \
+		/usr/include/qt5/QtMultimedia/QVideoFrame \
+		/usr/include/qt5/QtCore/QRect \
+		/usr/include/qt5/QtCore/QPoint \
+		/usr/include/qt5/QtCore/QThread \
+		/usr/include/qt5/QtCore/qthread.h \
+		project.h \
+		videosurface.h \
+		playitem.h \
+		convertimagethread.h \
+		controller.h
+	/usr/lib/i386-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/i386-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/i686-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/i686-linux-gnu/4.8/include-fixed -I/usr/include/i386-linux-gnu -I/usr/include controller.h -o moc_controller.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -766,11 +970,22 @@ main.o: main.cpp view.h \
 		/usr/include/qt5/QtMultimedia/qabstractvideosurface.h \
 		/usr/include/qt5/QtMultimedia/qvideoframe.h \
 		/usr/include/qt5/QtMultimedia/qabstractvideobuffer.h \
+		/usr/include/qt5/QtMultimedia/QAbstractVideoBuffer \
+		/usr/include/qt5/QtMultimedia/QVideoSurfaceFormat \
+		/usr/include/qt5/QtMultimedia/qvideosurfaceformat.h \
 		/usr/include/qt5/QtMultimediaWidgets/QVideoWidget \
 		/usr/include/qt5/QtMultimediaWidgets/qvideowidget.h \
 		/usr/include/qt5/QtMultimediaWidgets/qtmultimediawidgetdefs.h \
 		/usr/include/qt5/QtMultimedia/qmediabindableinterface.h \
+		/usr/include/qt5/QtMultimedia/QVideoFrame \
+		/usr/include/qt5/QtCore/QRect \
+		/usr/include/qt5/QtCore/QPoint \
+		/usr/include/qt5/QtCore/QThread \
+		/usr/include/qt5/QtCore/qthread.h \
 		project.h \
+		videosurface.h \
+		playitem.h \
+		convertimagethread.h \
 		/usr/include/qt5/QtWidgets/QApplication \
 		/usr/include/qt5/QtWidgets/qapplication.h \
 		/usr/include/qt5/QtCore/qcoreapplication.h \
@@ -950,11 +1165,22 @@ view.o: view.cpp view.h \
 		/usr/include/qt5/QtMultimedia/qabstractvideosurface.h \
 		/usr/include/qt5/QtMultimedia/qvideoframe.h \
 		/usr/include/qt5/QtMultimedia/qabstractvideobuffer.h \
+		/usr/include/qt5/QtMultimedia/QAbstractVideoBuffer \
+		/usr/include/qt5/QtMultimedia/QVideoSurfaceFormat \
+		/usr/include/qt5/QtMultimedia/qvideosurfaceformat.h \
 		/usr/include/qt5/QtMultimediaWidgets/QVideoWidget \
 		/usr/include/qt5/QtMultimediaWidgets/qvideowidget.h \
 		/usr/include/qt5/QtMultimediaWidgets/qtmultimediawidgetdefs.h \
 		/usr/include/qt5/QtMultimedia/qmediabindableinterface.h \
+		/usr/include/qt5/QtMultimedia/QVideoFrame \
+		/usr/include/qt5/QtCore/QRect \
+		/usr/include/qt5/QtCore/QPoint \
+		/usr/include/qt5/QtCore/QThread \
+		/usr/include/qt5/QtCore/qthread.h \
 		project.h \
+		videosurface.h \
+		playitem.h \
+		convertimagethread.h \
 		ui_view.h \
 		/usr/include/qt5/QtWidgets/QApplication \
 		/usr/include/qt5/QtWidgets/qapplication.h \
@@ -1155,11 +1381,22 @@ model.o: model.cpp model.h \
 		/usr/include/qt5/QtMultimedia/qabstractvideosurface.h \
 		/usr/include/qt5/QtMultimedia/qvideoframe.h \
 		/usr/include/qt5/QtMultimedia/qabstractvideobuffer.h \
+		/usr/include/qt5/QtMultimedia/QAbstractVideoBuffer \
+		/usr/include/qt5/QtMultimedia/QVideoSurfaceFormat \
+		/usr/include/qt5/QtMultimedia/qvideosurfaceformat.h \
 		/usr/include/qt5/QtMultimediaWidgets/QVideoWidget \
 		/usr/include/qt5/QtMultimediaWidgets/qvideowidget.h \
 		/usr/include/qt5/QtMultimediaWidgets/qtmultimediawidgetdefs.h \
 		/usr/include/qt5/QtMultimedia/qmediabindableinterface.h \
-		project.h
+		/usr/include/qt5/QtMultimedia/QVideoFrame \
+		/usr/include/qt5/QtCore/QRect \
+		/usr/include/qt5/QtCore/QPoint \
+		/usr/include/qt5/QtCore/QThread \
+		/usr/include/qt5/QtCore/qthread.h \
+		project.h \
+		videosurface.h \
+		playitem.h \
+		convertimagethread.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o model.o model.cpp
 
 controller.o: controller.cpp controller.h \
@@ -1332,11 +1569,22 @@ controller.o: controller.cpp controller.h \
 		/usr/include/qt5/QtMultimedia/qabstractvideosurface.h \
 		/usr/include/qt5/QtMultimedia/qvideoframe.h \
 		/usr/include/qt5/QtMultimedia/qabstractvideobuffer.h \
+		/usr/include/qt5/QtMultimedia/QAbstractVideoBuffer \
+		/usr/include/qt5/QtMultimedia/QVideoSurfaceFormat \
+		/usr/include/qt5/QtMultimedia/qvideosurfaceformat.h \
 		/usr/include/qt5/QtMultimediaWidgets/QVideoWidget \
 		/usr/include/qt5/QtMultimediaWidgets/qvideowidget.h \
 		/usr/include/qt5/QtMultimediaWidgets/qtmultimediawidgetdefs.h \
 		/usr/include/qt5/QtMultimedia/qmediabindableinterface.h \
-		project.h
+		/usr/include/qt5/QtMultimedia/QVideoFrame \
+		/usr/include/qt5/QtCore/QRect \
+		/usr/include/qt5/QtCore/QPoint \
+		/usr/include/qt5/QtCore/QThread \
+		/usr/include/qt5/QtCore/qthread.h \
+		project.h \
+		videosurface.h \
+		playitem.h \
+		convertimagethread.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o controller.o controller.cpp
 
 project.o: project.cpp project.h \
@@ -1507,20 +1755,410 @@ project.o: project.cpp project.h \
 		/usr/include/qt5/QtMultimedia/qabstractvideosurface.h \
 		/usr/include/qt5/QtMultimedia/qvideoframe.h \
 		/usr/include/qt5/QtMultimedia/qabstractvideobuffer.h \
+		/usr/include/qt5/QtMultimedia/QAbstractVideoBuffer \
+		/usr/include/qt5/QtMultimedia/QVideoSurfaceFormat \
+		/usr/include/qt5/QtMultimedia/qvideosurfaceformat.h \
 		/usr/include/qt5/QtMultimediaWidgets/QVideoWidget \
 		/usr/include/qt5/QtMultimediaWidgets/qvideowidget.h \
 		/usr/include/qt5/QtMultimediaWidgets/qtmultimediawidgetdefs.h \
 		/usr/include/qt5/QtMultimedia/qmediabindableinterface.h \
+		/usr/include/qt5/QtMultimedia/QVideoFrame \
+		/usr/include/qt5/QtCore/QRect \
+		/usr/include/qt5/QtCore/QPoint \
+		/usr/include/qt5/QtCore/QThread \
+		/usr/include/qt5/QtCore/qthread.h \
 		model.h \
 		view.h \
-		controller.h
+		controller.h \
+		videosurface.h \
+		playitem.h \
+		convertimagethread.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o project.o project.cpp
+
+videosurface.o: videosurface.cpp videosurface.h \
+		view.h \
+		controller.h \
+		model.h \
+		header.h \
+		/usr/include/qt5/QtWidgets/QMainWindow \
+		/usr/include/qt5/QtWidgets/qmainwindow.h \
+		/usr/include/qt5/QtWidgets/qwidget.h \
+		/usr/include/qt5/QtGui/qwindowdefs.h \
+		/usr/include/qt5/QtCore/qglobal.h \
+		/usr/include/qt5/QtCore/qconfig.h \
+		/usr/include/qt5/QtCore/qfeatures.h \
+		/usr/include/qt5/QtCore/qsystemdetection.h \
+		/usr/include/qt5/QtCore/qprocessordetection.h \
+		/usr/include/qt5/QtCore/qcompilerdetection.h \
+		/usr/include/qt5/QtCore/qglobalstatic.h \
+		/usr/include/qt5/QtCore/qatomic.h \
+		/usr/include/qt5/QtCore/qbasicatomic.h \
+		/usr/include/qt5/QtCore/qatomic_bootstrap.h \
+		/usr/include/qt5/QtCore/qgenericatomic.h \
+		/usr/include/qt5/QtCore/qatomic_msvc.h \
+		/usr/include/qt5/QtCore/qatomic_integrity.h \
+		/usr/include/qt5/QtCore/qoldbasicatomic.h \
+		/usr/include/qt5/QtCore/qatomic_vxworks.h \
+		/usr/include/qt5/QtCore/qatomic_power.h \
+		/usr/include/qt5/QtCore/qatomic_alpha.h \
+		/usr/include/qt5/QtCore/qatomic_armv7.h \
+		/usr/include/qt5/QtCore/qatomic_armv6.h \
+		/usr/include/qt5/QtCore/qatomic_armv5.h \
+		/usr/include/qt5/QtCore/qatomic_bfin.h \
+		/usr/include/qt5/QtCore/qatomic_ia64.h \
+		/usr/include/qt5/QtCore/qatomic_mips.h \
+		/usr/include/qt5/QtCore/qatomic_s390.h \
+		/usr/include/qt5/QtCore/qatomic_sh4a.h \
+		/usr/include/qt5/QtCore/qatomic_sparc.h \
+		/usr/include/qt5/QtCore/qatomic_gcc.h \
+		/usr/include/qt5/QtCore/qatomic_x86.h \
+		/usr/include/qt5/QtCore/qatomic_cxx11.h \
+		/usr/include/qt5/QtCore/qatomic_unix.h \
+		/usr/include/qt5/QtCore/qmutex.h \
+		/usr/include/qt5/QtCore/qlogging.h \
+		/usr/include/qt5/QtCore/qflags.h \
+		/usr/include/qt5/QtCore/qtypeinfo.h \
+		/usr/include/qt5/QtCore/qtypetraits.h \
+		/usr/include/qt5/QtCore/qsysinfo.h \
+		/usr/include/qt5/QtCore/qobjectdefs.h \
+		/usr/include/qt5/QtCore/qnamespace.h \
+		/usr/include/qt5/QtCore/qobjectdefs_impl.h \
+		/usr/include/qt5/QtGui/qwindowdefs_win.h \
+		/usr/include/qt5/QtCore/qobject.h \
+		/usr/include/qt5/QtCore/qstring.h \
+		/usr/include/qt5/QtCore/qchar.h \
+		/usr/include/qt5/QtCore/qbytearray.h \
+		/usr/include/qt5/QtCore/qrefcount.h \
+		/usr/include/qt5/QtCore/qarraydata.h \
+		/usr/include/qt5/QtCore/qstringbuilder.h \
+		/usr/include/qt5/QtCore/qlist.h \
+		/usr/include/qt5/QtCore/qalgorithms.h \
+		/usr/include/qt5/QtCore/qiterator.h \
+		/usr/include/qt5/QtCore/qcoreevent.h \
+		/usr/include/qt5/QtCore/qscopedpointer.h \
+		/usr/include/qt5/QtCore/qmetatype.h \
+		/usr/include/qt5/QtCore/qvarlengtharray.h \
+		/usr/include/qt5/QtCore/qcontainerfwd.h \
+		/usr/include/qt5/QtCore/qisenum.h \
+		/usr/include/qt5/QtCore/qobject_impl.h \
+		/usr/include/qt5/QtCore/qmargins.h \
+		/usr/include/qt5/QtCore/qrect.h \
+		/usr/include/qt5/QtCore/qsize.h \
+		/usr/include/qt5/QtCore/qpoint.h \
+		/usr/include/qt5/QtGui/qpaintdevice.h \
+		/usr/include/qt5/QtGui/qpalette.h \
+		/usr/include/qt5/QtGui/qcolor.h \
+		/usr/include/qt5/QtGui/qrgb.h \
+		/usr/include/qt5/QtCore/qstringlist.h \
+		/usr/include/qt5/QtCore/qdatastream.h \
+		/usr/include/qt5/QtCore/qiodevice.h \
+		/usr/include/qt5/QtCore/qpair.h \
+		/usr/include/qt5/QtCore/qregexp.h \
+		/usr/include/qt5/QtCore/qstringmatcher.h \
+		/usr/include/qt5/QtGui/qbrush.h \
+		/usr/include/qt5/QtCore/qvector.h \
+		/usr/include/qt5/QtGui/qmatrix.h \
+		/usr/include/qt5/QtGui/qpolygon.h \
+		/usr/include/qt5/QtGui/qregion.h \
+		/usr/include/qt5/QtCore/qline.h \
+		/usr/include/qt5/QtGui/qtransform.h \
+		/usr/include/qt5/QtGui/qpainterpath.h \
+		/usr/include/qt5/QtGui/qimage.h \
+		/usr/include/qt5/QtGui/qpixmap.h \
+		/usr/include/qt5/QtCore/qsharedpointer.h \
+		/usr/include/qt5/QtCore/qshareddata.h \
+		/usr/include/qt5/QtCore/qsharedpointer_impl.h \
+		/usr/include/qt5/QtCore/qhash.h \
+		/usr/include/qt5/QtGui/qfont.h \
+		/usr/include/qt5/QtGui/qfontmetrics.h \
+		/usr/include/qt5/QtGui/qfontinfo.h \
+		/usr/include/qt5/QtWidgets/qsizepolicy.h \
+		/usr/include/qt5/QtGui/qcursor.h \
+		/usr/include/qt5/QtGui/qkeysequence.h \
+		/usr/include/qt5/QtGui/qevent.h \
+		/usr/include/qt5/QtCore/qvariant.h \
+		/usr/include/qt5/QtCore/qmap.h \
+		/usr/include/qt5/QtCore/qdebug.h \
+		/usr/include/qt5/QtCore/qtextstream.h \
+		/usr/include/qt5/QtCore/qlocale.h \
+		/usr/include/qt5/QtCore/qset.h \
+		/usr/include/qt5/QtCore/qcontiguouscache.h \
+		/usr/include/qt5/QtCore/qurl.h \
+		/usr/include/qt5/QtCore/qurlquery.h \
+		/usr/include/qt5/QtCore/qfile.h \
+		/usr/include/qt5/QtCore/qfiledevice.h \
+		/usr/include/qt5/QtGui/qvector2d.h \
+		/usr/include/qt5/QtGui/qtouchdevice.h \
+		/usr/include/qt5/QtWidgets/qtabwidget.h \
+		/usr/include/qt5/QtGui/qicon.h \
+		/usr/include/qt5/QtWidgets/QMenu \
+		/usr/include/qt5/QtWidgets/qmenu.h \
+		/usr/include/qt5/QtWidgets/qaction.h \
+		/usr/include/qt5/QtWidgets/qactiongroup.h \
+		/usr/include/qt5/QtWidgets/QMenuBar \
+		/usr/include/qt5/QtWidgets/qmenubar.h \
+		/usr/include/qt5/QtWidgets/QPushButton \
+		/usr/include/qt5/QtWidgets/qpushbutton.h \
+		/usr/include/qt5/QtWidgets/qabstractbutton.h \
+		/usr/include/qt5/QtWidgets/QLabel \
+		/usr/include/qt5/QtWidgets/qlabel.h \
+		/usr/include/qt5/QtWidgets/qframe.h \
+		/usr/include/qt5/QtWidgets/QMessageBox \
+		/usr/include/qt5/QtWidgets/qmessagebox.h \
+		/usr/include/qt5/QtWidgets/qdialog.h \
+		/usr/include/qt5/QtWidgets/QToolBar \
+		/usr/include/qt5/QtWidgets/qtoolbar.h \
+		/usr/include/qt5/QtWidgets/QAction \
+		/usr/include/qt5/QtWidgets/QMdiArea \
+		/usr/include/qt5/QtWidgets/qmdiarea.h \
+		/usr/include/qt5/QtWidgets/qabstractscrollarea.h \
+		/usr/include/qt5/QtWidgets/QMdiSubWindow \
+		/usr/include/qt5/QtWidgets/qmdisubwindow.h \
+		/usr/include/qt5/QtCore/QSignalMapper \
+		/usr/include/qt5/QtCore/qsignalmapper.h \
+		/usr/include/qt5/QtWidgets/QFileDialog \
+		/usr/include/qt5/QtWidgets/qfiledialog.h \
+		/usr/include/qt5/QtCore/qdir.h \
+		/usr/include/qt5/QtCore/qfileinfo.h \
+		/usr/include/qt5/QtGui/QPixmap \
+		/usr/include/qt5/QtGui/QPainter \
+		/usr/include/qt5/QtGui/qpainter.h \
+		/usr/include/qt5/QtGui/qtextoption.h \
+		/usr/include/qt5/QtGui/qpen.h \
+		/usr/include/qt5/QtCore/QString \
+		/usr/include/qt5/QtGui/QRgb \
+		/usr/include/qt5/QtCore/QFile \
+		/usr/include/qt5/QtMultimedia/QMediaPlayer \
+		/usr/include/qt5/QtMultimedia/qmediaplayer.h \
+		/usr/include/qt5/QtMultimedia/qmediaobject.h \
+		/usr/include/qt5/QtMultimedia/qtmultimediadefs.h \
+		/usr/include/qt5/QtMultimedia/qmultimedia.h \
+		/usr/include/qt5/QtMultimedia/qmediacontent.h \
+		/usr/include/qt5/QtMultimedia/qmediaresource.h \
+		/usr/include/qt5/QtNetwork/qnetworkrequest.h \
+		/usr/include/qt5/QtCore/QSharedDataPointer \
+		/usr/include/qt5/QtCore/QUrl \
+		/usr/include/qt5/QtCore/QVariant \
+		/usr/include/qt5/QtMultimedia/qmediaenumdebug.h \
+		/usr/include/qt5/QtCore/qmetaobject.h \
+		/usr/include/qt5/QtNetwork/qnetworkconfiguration.h \
+		/usr/include/qt5/QtMultimedia/QAbstractVideoSurface \
+		/usr/include/qt5/QtMultimedia/qabstractvideosurface.h \
+		/usr/include/qt5/QtMultimedia/qvideoframe.h \
+		/usr/include/qt5/QtMultimedia/qabstractvideobuffer.h \
+		/usr/include/qt5/QtMultimedia/QAbstractVideoBuffer \
+		/usr/include/qt5/QtMultimedia/QVideoSurfaceFormat \
+		/usr/include/qt5/QtMultimedia/qvideosurfaceformat.h \
+		/usr/include/qt5/QtMultimediaWidgets/QVideoWidget \
+		/usr/include/qt5/QtMultimediaWidgets/qvideowidget.h \
+		/usr/include/qt5/QtMultimediaWidgets/qtmultimediawidgetdefs.h \
+		/usr/include/qt5/QtMultimedia/qmediabindableinterface.h \
+		/usr/include/qt5/QtMultimedia/QVideoFrame \
+		/usr/include/qt5/QtCore/QRect \
+		/usr/include/qt5/QtCore/QPoint \
+		/usr/include/qt5/QtCore/QThread \
+		/usr/include/qt5/QtCore/qthread.h \
+		project.h \
+		playitem.h \
+		convertimagethread.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o videosurface.o videosurface.cpp
+
+convertimagethread.o: convertimagethread.cpp convertimagethread.h \
+		header.h \
+		/usr/include/qt5/QtWidgets/QMainWindow \
+		/usr/include/qt5/QtWidgets/qmainwindow.h \
+		/usr/include/qt5/QtWidgets/qwidget.h \
+		/usr/include/qt5/QtGui/qwindowdefs.h \
+		/usr/include/qt5/QtCore/qglobal.h \
+		/usr/include/qt5/QtCore/qconfig.h \
+		/usr/include/qt5/QtCore/qfeatures.h \
+		/usr/include/qt5/QtCore/qsystemdetection.h \
+		/usr/include/qt5/QtCore/qprocessordetection.h \
+		/usr/include/qt5/QtCore/qcompilerdetection.h \
+		/usr/include/qt5/QtCore/qglobalstatic.h \
+		/usr/include/qt5/QtCore/qatomic.h \
+		/usr/include/qt5/QtCore/qbasicatomic.h \
+		/usr/include/qt5/QtCore/qatomic_bootstrap.h \
+		/usr/include/qt5/QtCore/qgenericatomic.h \
+		/usr/include/qt5/QtCore/qatomic_msvc.h \
+		/usr/include/qt5/QtCore/qatomic_integrity.h \
+		/usr/include/qt5/QtCore/qoldbasicatomic.h \
+		/usr/include/qt5/QtCore/qatomic_vxworks.h \
+		/usr/include/qt5/QtCore/qatomic_power.h \
+		/usr/include/qt5/QtCore/qatomic_alpha.h \
+		/usr/include/qt5/QtCore/qatomic_armv7.h \
+		/usr/include/qt5/QtCore/qatomic_armv6.h \
+		/usr/include/qt5/QtCore/qatomic_armv5.h \
+		/usr/include/qt5/QtCore/qatomic_bfin.h \
+		/usr/include/qt5/QtCore/qatomic_ia64.h \
+		/usr/include/qt5/QtCore/qatomic_mips.h \
+		/usr/include/qt5/QtCore/qatomic_s390.h \
+		/usr/include/qt5/QtCore/qatomic_sh4a.h \
+		/usr/include/qt5/QtCore/qatomic_sparc.h \
+		/usr/include/qt5/QtCore/qatomic_gcc.h \
+		/usr/include/qt5/QtCore/qatomic_x86.h \
+		/usr/include/qt5/QtCore/qatomic_cxx11.h \
+		/usr/include/qt5/QtCore/qatomic_unix.h \
+		/usr/include/qt5/QtCore/qmutex.h \
+		/usr/include/qt5/QtCore/qlogging.h \
+		/usr/include/qt5/QtCore/qflags.h \
+		/usr/include/qt5/QtCore/qtypeinfo.h \
+		/usr/include/qt5/QtCore/qtypetraits.h \
+		/usr/include/qt5/QtCore/qsysinfo.h \
+		/usr/include/qt5/QtCore/qobjectdefs.h \
+		/usr/include/qt5/QtCore/qnamespace.h \
+		/usr/include/qt5/QtCore/qobjectdefs_impl.h \
+		/usr/include/qt5/QtGui/qwindowdefs_win.h \
+		/usr/include/qt5/QtCore/qobject.h \
+		/usr/include/qt5/QtCore/qstring.h \
+		/usr/include/qt5/QtCore/qchar.h \
+		/usr/include/qt5/QtCore/qbytearray.h \
+		/usr/include/qt5/QtCore/qrefcount.h \
+		/usr/include/qt5/QtCore/qarraydata.h \
+		/usr/include/qt5/QtCore/qstringbuilder.h \
+		/usr/include/qt5/QtCore/qlist.h \
+		/usr/include/qt5/QtCore/qalgorithms.h \
+		/usr/include/qt5/QtCore/qiterator.h \
+		/usr/include/qt5/QtCore/qcoreevent.h \
+		/usr/include/qt5/QtCore/qscopedpointer.h \
+		/usr/include/qt5/QtCore/qmetatype.h \
+		/usr/include/qt5/QtCore/qvarlengtharray.h \
+		/usr/include/qt5/QtCore/qcontainerfwd.h \
+		/usr/include/qt5/QtCore/qisenum.h \
+		/usr/include/qt5/QtCore/qobject_impl.h \
+		/usr/include/qt5/QtCore/qmargins.h \
+		/usr/include/qt5/QtCore/qrect.h \
+		/usr/include/qt5/QtCore/qsize.h \
+		/usr/include/qt5/QtCore/qpoint.h \
+		/usr/include/qt5/QtGui/qpaintdevice.h \
+		/usr/include/qt5/QtGui/qpalette.h \
+		/usr/include/qt5/QtGui/qcolor.h \
+		/usr/include/qt5/QtGui/qrgb.h \
+		/usr/include/qt5/QtCore/qstringlist.h \
+		/usr/include/qt5/QtCore/qdatastream.h \
+		/usr/include/qt5/QtCore/qiodevice.h \
+		/usr/include/qt5/QtCore/qpair.h \
+		/usr/include/qt5/QtCore/qregexp.h \
+		/usr/include/qt5/QtCore/qstringmatcher.h \
+		/usr/include/qt5/QtGui/qbrush.h \
+		/usr/include/qt5/QtCore/qvector.h \
+		/usr/include/qt5/QtGui/qmatrix.h \
+		/usr/include/qt5/QtGui/qpolygon.h \
+		/usr/include/qt5/QtGui/qregion.h \
+		/usr/include/qt5/QtCore/qline.h \
+		/usr/include/qt5/QtGui/qtransform.h \
+		/usr/include/qt5/QtGui/qpainterpath.h \
+		/usr/include/qt5/QtGui/qimage.h \
+		/usr/include/qt5/QtGui/qpixmap.h \
+		/usr/include/qt5/QtCore/qsharedpointer.h \
+		/usr/include/qt5/QtCore/qshareddata.h \
+		/usr/include/qt5/QtCore/qsharedpointer_impl.h \
+		/usr/include/qt5/QtCore/qhash.h \
+		/usr/include/qt5/QtGui/qfont.h \
+		/usr/include/qt5/QtGui/qfontmetrics.h \
+		/usr/include/qt5/QtGui/qfontinfo.h \
+		/usr/include/qt5/QtWidgets/qsizepolicy.h \
+		/usr/include/qt5/QtGui/qcursor.h \
+		/usr/include/qt5/QtGui/qkeysequence.h \
+		/usr/include/qt5/QtGui/qevent.h \
+		/usr/include/qt5/QtCore/qvariant.h \
+		/usr/include/qt5/QtCore/qmap.h \
+		/usr/include/qt5/QtCore/qdebug.h \
+		/usr/include/qt5/QtCore/qtextstream.h \
+		/usr/include/qt5/QtCore/qlocale.h \
+		/usr/include/qt5/QtCore/qset.h \
+		/usr/include/qt5/QtCore/qcontiguouscache.h \
+		/usr/include/qt5/QtCore/qurl.h \
+		/usr/include/qt5/QtCore/qurlquery.h \
+		/usr/include/qt5/QtCore/qfile.h \
+		/usr/include/qt5/QtCore/qfiledevice.h \
+		/usr/include/qt5/QtGui/qvector2d.h \
+		/usr/include/qt5/QtGui/qtouchdevice.h \
+		/usr/include/qt5/QtWidgets/qtabwidget.h \
+		/usr/include/qt5/QtGui/qicon.h \
+		/usr/include/qt5/QtWidgets/QMenu \
+		/usr/include/qt5/QtWidgets/qmenu.h \
+		/usr/include/qt5/QtWidgets/qaction.h \
+		/usr/include/qt5/QtWidgets/qactiongroup.h \
+		/usr/include/qt5/QtWidgets/QMenuBar \
+		/usr/include/qt5/QtWidgets/qmenubar.h \
+		/usr/include/qt5/QtWidgets/QPushButton \
+		/usr/include/qt5/QtWidgets/qpushbutton.h \
+		/usr/include/qt5/QtWidgets/qabstractbutton.h \
+		/usr/include/qt5/QtWidgets/QLabel \
+		/usr/include/qt5/QtWidgets/qlabel.h \
+		/usr/include/qt5/QtWidgets/qframe.h \
+		/usr/include/qt5/QtWidgets/QMessageBox \
+		/usr/include/qt5/QtWidgets/qmessagebox.h \
+		/usr/include/qt5/QtWidgets/qdialog.h \
+		/usr/include/qt5/QtWidgets/QToolBar \
+		/usr/include/qt5/QtWidgets/qtoolbar.h \
+		/usr/include/qt5/QtWidgets/QAction \
+		/usr/include/qt5/QtWidgets/QMdiArea \
+		/usr/include/qt5/QtWidgets/qmdiarea.h \
+		/usr/include/qt5/QtWidgets/qabstractscrollarea.h \
+		/usr/include/qt5/QtWidgets/QMdiSubWindow \
+		/usr/include/qt5/QtWidgets/qmdisubwindow.h \
+		/usr/include/qt5/QtCore/QSignalMapper \
+		/usr/include/qt5/QtCore/qsignalmapper.h \
+		/usr/include/qt5/QtWidgets/QFileDialog \
+		/usr/include/qt5/QtWidgets/qfiledialog.h \
+		/usr/include/qt5/QtCore/qdir.h \
+		/usr/include/qt5/QtCore/qfileinfo.h \
+		/usr/include/qt5/QtGui/QPixmap \
+		/usr/include/qt5/QtGui/QPainter \
+		/usr/include/qt5/QtGui/qpainter.h \
+		/usr/include/qt5/QtGui/qtextoption.h \
+		/usr/include/qt5/QtGui/qpen.h \
+		/usr/include/qt5/QtCore/QString \
+		/usr/include/qt5/QtGui/QRgb \
+		/usr/include/qt5/QtCore/QFile \
+		/usr/include/qt5/QtMultimedia/QMediaPlayer \
+		/usr/include/qt5/QtMultimedia/qmediaplayer.h \
+		/usr/include/qt5/QtMultimedia/qmediaobject.h \
+		/usr/include/qt5/QtMultimedia/qtmultimediadefs.h \
+		/usr/include/qt5/QtMultimedia/qmultimedia.h \
+		/usr/include/qt5/QtMultimedia/qmediacontent.h \
+		/usr/include/qt5/QtMultimedia/qmediaresource.h \
+		/usr/include/qt5/QtNetwork/qnetworkrequest.h \
+		/usr/include/qt5/QtCore/QSharedDataPointer \
+		/usr/include/qt5/QtCore/QUrl \
+		/usr/include/qt5/QtCore/QVariant \
+		/usr/include/qt5/QtMultimedia/qmediaenumdebug.h \
+		/usr/include/qt5/QtCore/qmetaobject.h \
+		/usr/include/qt5/QtNetwork/qnetworkconfiguration.h \
+		/usr/include/qt5/QtMultimedia/QAbstractVideoSurface \
+		/usr/include/qt5/QtMultimedia/qabstractvideosurface.h \
+		/usr/include/qt5/QtMultimedia/qvideoframe.h \
+		/usr/include/qt5/QtMultimedia/qabstractvideobuffer.h \
+		/usr/include/qt5/QtMultimedia/QAbstractVideoBuffer \
+		/usr/include/qt5/QtMultimedia/QVideoSurfaceFormat \
+		/usr/include/qt5/QtMultimedia/qvideosurfaceformat.h \
+		/usr/include/qt5/QtMultimediaWidgets/QVideoWidget \
+		/usr/include/qt5/QtMultimediaWidgets/qvideowidget.h \
+		/usr/include/qt5/QtMultimediaWidgets/qtmultimediawidgetdefs.h \
+		/usr/include/qt5/QtMultimedia/qmediabindableinterface.h \
+		/usr/include/qt5/QtMultimedia/QVideoFrame \
+		/usr/include/qt5/QtCore/QRect \
+		/usr/include/qt5/QtCore/QPoint \
+		/usr/include/qt5/QtCore/QThread \
+		/usr/include/qt5/QtCore/qthread.h \
+		view.h \
+		controller.h \
+		model.h \
+		project.h \
+		videosurface.h \
+		playitem.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o convertimagethread.o convertimagethread.cpp
 
 qrc_resources.o: qrc_resources.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_resources.o qrc_resources.cpp
 
 moc_view.o: moc_view.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_view.o moc_view.cpp
+
+moc_controller.o: moc_controller.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_controller.o moc_controller.cpp
 
 ####### Install
 
