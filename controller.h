@@ -7,6 +7,7 @@
 #include "project.h"
 #include "videosurface.h"
 #include "playitem.h"
+#include "convertimagethread.h"
 
 class Controller : public QObject
 {
@@ -18,6 +19,8 @@ public:
 public:
     View* view;
     Model* model;
+    ConvertImageThread *convertimagethread;
+
 
 public:
     std::vector<QPixmap*> pixmaps;
@@ -25,6 +28,7 @@ public:
     std::vector<VideoSurface*> video_surfaces;
     std::vector<QImage> videos_frames_pictures;
     std::vector <PlayItem> playlist;
+    std::vector<ConvertImageThread*> vector_threads;
     unsigned int index_of_playlist;
 
 public:

@@ -60,29 +60,63 @@ void Controller::save_as()
 
 void Controller::convert()
 {
+
     int number_of_sub_windows = this->view->sub_windows.size();
-    for(int index = 0; index < number_of_sub_windows; index++)
+
+    //creation des threads
+    for(int i=0; i<number_of_sub_windows;i++)
     {
-        QString file_name = this->view->sub_windows[index]->accessibleName();
+       ConvertImageThread* new_thread_convert= new ConvertImageThread();
+       vector_threads.push_back(new_thread_convert);
 
-        if(file_name.toLower().endsWith(".png") || file_name.toLower().endsWith(".jpg") || file_name.toLower().endsWith(".jpeg"))
-        {
-            QImage picture = this->pixmaps[index]->toImage();
+       QImage im=this->pixmaps[i]->toImage();
+       this->vector_threads[i]->result=im;
 
-            this->conversion(&picture);
-
-            QLabel* picture_container = new QLabel;
-            *(this->pixmaps[index]) = this->pixmaps[index]->fromImage(picture);
-            picture_container->setPixmap(*this->pixmaps[index]);
-            this->view->sub_windows[index]->setWidget(picture_container);
-            this->view->display_sub_window(index);
-        }
-
-        else if(file_name.toLower().endsWith(".avi") || file_name.toLower().endsWith(".mp4"))
-        {
-            this->video_surfaces[index]->flag_convert = true;
-        }
     }
+
+     //on lance les threads
+    for(int index=0; index<number_of_sub_windows; index++)
+     {
+           this->vector_threads[index]->start();
+
+     }
+
+
+    for(int index=0; index<number_of_sub_windows; index++)
+     {
+        this->vector_threads[index]->wait();//on attend que les threads finissent
+
+
+        QLabel* picture_container = new QLabel;
+        *(this->pixmaps[index]) = QPixmap::fromImage(this->vector_threads[index]->result);
+        picture_container->setPixmap(*this->pixmaps[index]);
+        this->view->sub_windows[index]->setWidget(picture_container);
+        this->view->display_sub_window(index);
+    }
+
+//    int number_of_sub_windows = this->view->sub_windows.size();
+//    for(int index = 0; index < number_of_sub_windows; index++)
+//    {
+//        QString file_name = this->view->sub_windows[index]->accessibleName();
+
+//        if(file_name.toLower().endsWith(".png") || file_name.toLower().endsWith(".jpg") || file_name.toLower().endsWith(".jpeg"))
+//        {
+//            QImage picture = this->pixmaps[index]->toImage();
+
+//            this->conversion(&picture);
+
+//            QLabel* picture_container = new QLabel;
+//            *(this->pixmaps[index]) = this->pixmaps[index]->fromImage(picture);
+//            picture_container->setPixmap(*this->pixmaps[index]);
+//            this->view->sub_windows[index]->setWidget(picture_container);
+//            this->view->display_sub_window(index);
+//        }
+
+//        else if(file_name.toLower().endsWith(".avi") || file_name.toLower().endsWith(".mp4"))
+//        {
+//            this->video_surfaces[index]->flag_convert = true;
+//        }
+//    }
 }
 
 void Controller::assemble()

@@ -27,6 +27,7 @@
 #include <QRect>
 #include <QUrl>
 #include <QPoint>
+#include <QThread>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -37,5 +38,6 @@ class Model;
 class SubWindow;
 class VideoSurface;
 struct Playlist;
+class ConvertImageThread;
 
 #endif // HEADER_H
