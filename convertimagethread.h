@@ -2,21 +2,25 @@
 #define CONVERTIMAGETHREAD_H
 
 #include "header.h"
-#include "view.h"
 #include "controller.h"
 
 class ConvertImageThread : public QThread
 {
+public:
+    ConvertImageThread();
 
 public:
-    explicit ConvertImageThread(QObject *parent = 0);
+
+
+    explicit ConvertImageThread(QObject *parent, Controller* controller, View* view, int index);
+
     void run();
 
-   // ~convert_image_thread();
-
 public:
-
+    Controller* controller;
+    View * view;
     QImage result;
+    int index;
 
 private:
 

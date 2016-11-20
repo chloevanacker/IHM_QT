@@ -15,7 +15,13 @@ ConvertVideoThread::ConvertVideoThread(QObject *parent, Controller* controller, 
 
 void ConvertVideoThread::run()
 {
+
     qDebug()<<QString("Thread debut");
+    //Preuve que les threads fonctionnent bien en meme temps
+    for(int a=0;a<100;a++)
+   {
+     qDebug()<<QString("%1").arg(a);
+      }
 
     this->video_surface->flag_convert = true;
 

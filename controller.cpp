@@ -59,7 +59,7 @@ void Controller::save_as()
 
 }
 
-void Controller::convert()
+void Controller::convert_all()
 {
 
     int number_of_sub_windows = this->view->sub_windows.size();
@@ -77,11 +77,10 @@ void Controller::convert()
 
         if(file_names[index].toLower().endsWith(".png") || file_names[index].toLower().endsWith(".jpg") || file_names[index].toLower().endsWith(".jpeg"))
         {
-           ConvertImageThread* new_thread_convert_image= new ConvertImageThread();
+           ConvertImageThread* new_thread_convert_image= new ConvertImageThread(NULL,this,this->view,index);
            this->vector_threads_images.push_back(new_thread_convert_image);
 
-           QImage image =this->pixmaps[index]->toImage();
-           this->vector_threads_images[index]->result = image;
+           this->vector_threads_images[index]->controller = this;
 
         }
         else if(file_names[index].toLower().endsWith(".avi") || file_names[index].toLower().endsWith(".mp4"))
@@ -115,11 +114,8 @@ void Controller::convert()
         if(file_names[index].toLower().endsWith(".png") || file_names[index].toLower().endsWith(".jpg") || file_names[index].toLower().endsWith(".jpeg"))
         {
             this->vector_threads_images[index]->wait();//on attend que les threads finissent
-            QLabel* picture_container = new QLabel;
-            *(this->pixmaps[index]) = QPixmap::fromImage(this->vector_threads_images[index]->result);
-            picture_container->setPixmap(*this->pixmaps[index]);
-            this->view->sub_windows[index]->setWidget(picture_container);
-            this->view->display_sub_window(index);
+            this->view->refresh_sub_window(index);
+
         }
         else if(file_names[index].toLower().endsWith(".avi") || file_names[index].toLower().endsWith(".mp4"))
         {

@@ -20,7 +20,7 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_View_t {
     QByteArrayData data[12];
-    char stringdata[75];
+    char stringdata[79];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -34,15 +34,15 @@ QT_MOC_LITERAL(1, 5, 4),
 QT_MOC_LITERAL(2, 10, 0),
 QT_MOC_LITERAL(3, 11, 4),
 QT_MOC_LITERAL(4, 16, 7),
-QT_MOC_LITERAL(5, 24, 7),
-QT_MOC_LITERAL(6, 32, 8),
-QT_MOC_LITERAL(7, 41, 4),
-QT_MOC_LITERAL(8, 46, 4),
-QT_MOC_LITERAL(9, 51, 4),
-QT_MOC_LITERAL(10, 56, 5),
-QT_MOC_LITERAL(11, 62, 11)
+QT_MOC_LITERAL(5, 24, 11),
+QT_MOC_LITERAL(6, 36, 8),
+QT_MOC_LITERAL(7, 45, 4),
+QT_MOC_LITERAL(8, 50, 4),
+QT_MOC_LITERAL(9, 55, 4),
+QT_MOC_LITERAL(10, 60, 5),
+QT_MOC_LITERAL(11, 66, 11)
     },
-    "View\0open\0\0save\0save_as\0convert\0"
+    "View\0open\0\0save\0save_as\0convert_all\0"
     "assemble\0undo\0redo\0help\0about\0new_project\0"
 };
 #undef QT_MOC_LITERAL
@@ -95,7 +95,7 @@ void View::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void *
         case 0: _t->open(); break;
         case 1: _t->save(); break;
         case 2: _t->save_as(); break;
-        case 3: _t->convert(); break;
+        case 3: _t->convert_all(); break;
         case 4: _t->assemble(); break;
         case 5: _t->undo(); break;
         case 6: _t->redo(); break;

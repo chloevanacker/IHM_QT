@@ -6,7 +6,7 @@
 
 QT       += core gui multimedia multimediawidgets
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets multimedia
 
 TARGET = Project
 TEMPLATE = app
@@ -26,7 +26,7 @@ HEADERS  += view.h \
             controller.h \
             header.h \
             project.h \
-    videosurface.h \
+            videosurface.h \
     playitem.h \
     convertimagethread.h \
     convertvideothread.h

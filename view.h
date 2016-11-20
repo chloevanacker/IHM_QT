@@ -39,6 +39,7 @@ public:
     void add_sub_window();
     void display_sub_window(int index_of_sub_window);
     void hide_sub_window(int index_of_sub_window);
+    void refresh_sub_window(int index_of_sub_window);
 
 
 /*Declaration of all the actions attributes, and of the function that create these actions */
@@ -60,7 +61,7 @@ private slots:
     void open();
     void save();
     void save_as();
-    void convert();
+    void convert_all();
     void assemble();
     void undo();
     void redo();

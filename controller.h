@@ -20,7 +20,6 @@ public:
 public:
     View* view;
     Model* model;
-    ConvertImageThread *convertimagethread;
 
 
 public:
@@ -39,7 +38,7 @@ public:
     void open();
     void save();
     void save_as();
-    void convert();
+    void convert_all();
     void assemble();
     void undo();
     void redo();

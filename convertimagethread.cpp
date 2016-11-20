@@ -1,7 +1,12 @@
 #include "convertimagethread.h"
+#include "header.h"
 
-ConvertImageThread::ConvertImageThread(QObject *parent) : QThread(parent)
+
+ConvertImageThread::ConvertImageThread(QObject *parent, Controller* controller, View* view, int i) : QThread(parent)
 {
+    this->controller = controller;
+    this->view=view;
+    index=i;
 }
 
 
@@ -9,8 +14,19 @@ ConvertImageThread::ConvertImageThread(QObject *parent) : QThread(parent)
 void ConvertImageThread::run( )
 {
 
-    qDebug()<<QString("Thread debut");
+    qDebug()<<QString("Thread %1 debut").arg(index);
 
+
+
+//    Preuve que les threads fonctionnent bien en meme temps
+//     for(int a=0;a<10;a++)
+//     {
+//     qDebug()<<QString("%1").arg(a);
+//      }
+
+
+    QPixmap* pix =this->controller->pixmaps[index];
+    result=pix->toImage();
 
     for (int height = 0; height < result.height(); height++)
     {
@@ -32,14 +48,7 @@ void ConvertImageThread::run( )
     }
 
 
-
-        //Preuve que les threads fonctionnent bien en meme temps
-       // for(int a=0;a<100;a++)
-       // {
-         //   qDebug()<<QString("%1").arg(a);
-        //}
-
-        qDebug()<<QString("Thread fin");
+    qDebug()<<QString("Thread %1 fin").arg(index);
 
 
 }

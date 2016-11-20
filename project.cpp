@@ -14,5 +14,14 @@ Project::Project(Model* model, View* view, Controller* controller)
 
 Project::~Project()
 {
+//    delete model;
+//    delete view;
+//    delete controller;
+
+    //12 bytes in 1 blocks are definitely lost in loss record 2,918 of 14,455
+    //in main in main.cpp:10
+    //1: operator new(unsigned int) in /usr/lib/valgrind/vgpreload_memcheck-x86-linux.so
+    //2: main in <a href="file:///home/np/Documents/GIT/IHM_QT/main.cpp:10" >main.cpp:10</a>
+
 
 }

@@ -123,8 +123,8 @@ void View::create_actions()
     connect(save_as_action, SIGNAL(triggered()), this, SLOT(save_as()));
 
     convert_action = new QAction(QIcon("://icons/black_and_white.png"), tr("Black and White"), this);
-    convert_action->setStatusTip(tr("Converts the picture or video to black and white"));
-    connect(convert_action, SIGNAL(triggered()), this, SLOT(convert()));
+    convert_action->setStatusTip(tr("Converts all pictures or videos to black and white"));
+    connect(convert_action, SIGNAL(triggered()), this, SLOT(convert_all()));
 
     assemble_action = new QAction(QIcon("://icons/assemble.png"), tr("Assemble"), this);
     assemble_action->setStatusTip(tr("Assemble all the open pictures or videos into one"));
@@ -171,9 +171,9 @@ void View::save_as()
     this->controller->save_as();
 }
 
-void View::convert()
+void View::convert_all()
 {
-    this->controller->convert();
+    this->controller->convert_all();
     save_action->setEnabled(true);
     save_as_action->setEnabled(true);
 }
@@ -290,4 +290,14 @@ void View::display_sub_window(int index_of_sub_window)
 void View::hide_sub_window(int index_of_sub_window)
 {
     this->sub_windows[index_of_sub_window]->hide();
+}
+
+void View::refresh_sub_window(int index_of_sub_window)
+{
+    QLabel* result_label = new QLabel;
+    *(this->controller->pixmaps[index_of_sub_window]) = QPixmap::fromImage(this->controller->vector_threads_images[index_of_sub_window]->result);
+    result_label->setPixmap(*this->controller->pixmaps[index_of_sub_window]);
+    this->sub_windows[index_of_sub_window]->setWidget(result_label);
+    this->display_sub_window(index_of_sub_window);
+
 }
