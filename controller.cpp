@@ -7,16 +7,30 @@ Controller::Controller()
 
 }
 
-void Controller::open()
+void Controller::open_image()
 {
-    QStringList file_names = this->view->display_open_box();
+    QStringList file_names = this->view->display_open_box_image();
 
     if(!file_names.isEmpty())
     {
         for (int i = 0; i < file_names.size(); i++)
         {
             this->view->add_sub_window();
-            this->model->load_file(file_names[i]);
+            this->model->load_image_file(file_names[i]);
+            this->view->display_sub_window(this->view->sub_windows.size()-1);
+        }
+    }
+}
+void Controller::open_video()
+{
+    QStringList file_names = this->view->display_open_box_video();
+
+    if(!file_names.isEmpty())
+    {
+        for (int i = 0; i < file_names.size(); i++)
+        {
+            this->view->add_sub_window();
+            this->model->load_video_file(file_names[i]);
             this->view->display_sub_window(this->view->sub_windows.size()-1);
         }
     }
@@ -189,6 +203,7 @@ void Controller::assemble()
         {
             painter.drawImage(this->view->sub_windows.at(i)->pos().rx()-min_width, this->view->sub_windows.at(i)->pos().ry()-min_height, this->pixmaps.at(i)->toImage(), 0, 0, max_width-min_width, max_height-min_height, Qt::AutoColor);
         }
+        
         painter.end();
 
         QLabel* result_container = new QLabel;

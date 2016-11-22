@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_View_t {
-    QByteArrayData data[12];
-    char stringdata[79];
+    QByteArrayData data[13];
+    char stringdata[96];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -30,20 +30,22 @@ struct qt_meta_stringdata_View_t {
 static const qt_meta_stringdata_View_t qt_meta_stringdata_View = {
     {
 QT_MOC_LITERAL(0, 0, 4),
-QT_MOC_LITERAL(1, 5, 4),
-QT_MOC_LITERAL(2, 10, 0),
-QT_MOC_LITERAL(3, 11, 4),
-QT_MOC_LITERAL(4, 16, 7),
-QT_MOC_LITERAL(5, 24, 11),
-QT_MOC_LITERAL(6, 36, 8),
-QT_MOC_LITERAL(7, 45, 4),
-QT_MOC_LITERAL(8, 50, 4),
-QT_MOC_LITERAL(9, 55, 4),
-QT_MOC_LITERAL(10, 60, 5),
-QT_MOC_LITERAL(11, 66, 11)
+QT_MOC_LITERAL(1, 5, 10),
+QT_MOC_LITERAL(2, 16, 0),
+QT_MOC_LITERAL(3, 17, 10),
+QT_MOC_LITERAL(4, 28, 4),
+QT_MOC_LITERAL(5, 33, 7),
+QT_MOC_LITERAL(6, 41, 11),
+QT_MOC_LITERAL(7, 53, 8),
+QT_MOC_LITERAL(8, 62, 4),
+QT_MOC_LITERAL(9, 67, 4),
+QT_MOC_LITERAL(10, 72, 4),
+QT_MOC_LITERAL(11, 77, 5),
+QT_MOC_LITERAL(12, 83, 11)
     },
-    "View\0open\0\0save\0save_as\0convert_all\0"
-    "assemble\0undo\0redo\0help\0about\0new_project\0"
+    "View\0open_image\0\0open_video\0save\0"
+    "save_as\0convert_all\0assemble\0undo\0"
+    "redo\0help\0about\0new_project\0"
 };
 #undef QT_MOC_LITERAL
 
@@ -53,7 +55,7 @@ static const uint qt_meta_data_View[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      10,   14, // methods
+      11,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -61,18 +63,20 @@ static const uint qt_meta_data_View[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,   64,    2, 0x08,
-       3,    0,   65,    2, 0x08,
-       4,    0,   66,    2, 0x08,
-       5,    0,   67,    2, 0x08,
-       6,    0,   68,    2, 0x08,
-       7,    0,   69,    2, 0x08,
-       8,    0,   70,    2, 0x08,
-       9,    0,   71,    2, 0x08,
-      10,    0,   72,    2, 0x08,
-      11,    0,   73,    2, 0x08,
+       1,    0,   69,    2, 0x08,
+       3,    0,   70,    2, 0x08,
+       4,    0,   71,    2, 0x08,
+       5,    0,   72,    2, 0x08,
+       6,    0,   73,    2, 0x08,
+       7,    0,   74,    2, 0x08,
+       8,    0,   75,    2, 0x08,
+       9,    0,   76,    2, 0x08,
+      10,    0,   77,    2, 0x08,
+      11,    0,   78,    2, 0x08,
+      12,    0,   79,    2, 0x08,
 
  // slots: parameters
+    QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -92,16 +96,17 @@ void View::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void *
     if (_c == QMetaObject::InvokeMetaMethod) {
         View *_t = static_cast<View *>(_o);
         switch (_id) {
-        case 0: _t->open(); break;
-        case 1: _t->save(); break;
-        case 2: _t->save_as(); break;
-        case 3: _t->convert_all(); break;
-        case 4: _t->assemble(); break;
-        case 5: _t->undo(); break;
-        case 6: _t->redo(); break;
-        case 7: _t->help(); break;
-        case 8: _t->about(); break;
-        case 9: _t->new_project(); break;
+        case 0: _t->open_image(); break;
+        case 1: _t->open_video(); break;
+        case 2: _t->save(); break;
+        case 3: _t->save_as(); break;
+        case 4: _t->convert_all(); break;
+        case 5: _t->assemble(); break;
+        case 6: _t->undo(); break;
+        case 7: _t->redo(); break;
+        case 8: _t->help(); break;
+        case 9: _t->about(); break;
+        case 10: _t->new_project(); break;
         default: ;
         }
     }
@@ -133,13 +138,13 @@ int View::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 10)
+        if (_id < 11)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 10;
+        _id -= 11;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 10)
+        if (_id < 11)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 10;
+        _id -= 11;
     }
     return _id;
 }

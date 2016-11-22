@@ -20,6 +20,9 @@ View::View(QWidget *parent) : QMainWindow(parent), ui(new Ui::View)
     create_menu();
     create_tool_bar();
 
+    open_action_image->setEnabled(true);
+    open_action_video->setEnabled(true);
+
     assemble_action->setEnabled(false);
     convert_action->setEnabled(false);
     save_action->setEnabled(false);
@@ -44,7 +47,8 @@ View::~View()
 
 void View::delete_actions()
 {
-    delete open_action;
+    delete open_action_image;
+    delete open_action_video;
     delete save_action;
     delete save_as_action;
     delete convert_action;
@@ -75,7 +79,8 @@ void View::create_menu()
 {
     file_menu = menuBar()->addMenu(tr("&File"));
     file_menu->addAction(new_project_action);
-    file_menu->addAction(open_action);
+    file_menu->addAction(open_action_image);
+    file_menu->addAction(open_action_video);
     file_menu->addAction(save_action);
     file_menu->addAction(save_as_action);
 
@@ -95,7 +100,8 @@ void View::create_menu()
 void View::create_tool_bar()
 {
     file_tool_bar = addToolBar(tr("&File"));
-    file_tool_bar->addAction(open_action);
+    file_tool_bar->addAction(open_action_image);
+    file_tool_bar->addAction(open_action_video);
     file_tool_bar->addAction(save_action);
     file_tool_bar->addAction(save_as_action);
 
@@ -110,9 +116,13 @@ void View::create_tool_bar()
 
 void View::create_actions()
 {
-    open_action = new QAction(QIcon("://icons/open.png"), tr("Open..."), this);
-    open_action->setStatusTip(tr("Open a new picture a video file"));
-    connect(open_action, SIGNAL(triggered()), this, SLOT(open()));
+    open_action_image = new QAction(QIcon("://icons/openimage.png"), tr("Open..."), this);
+    open_action_image->setStatusTip(tr("Open new picture files"));
+    connect(open_action_image, SIGNAL(triggered()), this, SLOT(open_image()));
+
+    open_action_video = new QAction(QIcon("://icons/openvideo.png"), tr("Open..."), this);
+    open_action_video->setStatusTip(tr("Open new video files"));
+    connect(open_action_video, SIGNAL(triggered()), this, SLOT(open_video()));
 
     save_action = new QAction(QIcon("://icons/save.png"), tr("Save"), this);
     save_action->setStatusTip(tr("Save the file"));
@@ -152,10 +162,29 @@ void View::create_actions()
 
 }
 
-void View::open()
+void View::initial_actions_state()
 {
-    this->controller->open();
+    open_action_image->setEnabled(true);
+    open_action_video->setEnabled(true);
+
+    assemble_action->setEnabled(false);
+    convert_action->setEnabled(false);
+    save_action->setEnabled(false);
+    save_as_action->setEnabled(false);
 }
+
+void View::open_image()
+{
+    this->controller->open_image();
+    open_action_video->setEnabled(false);
+}
+
+void View::open_video()
+{
+    this->controller->open_video();
+    open_action_image->setEnabled(false);
+}
+
 
 void View::save()
 {
@@ -232,36 +261,32 @@ void View::display_message_box(QString title, QString content)
     this->message_box->show();
 }
 
-QStringList View::display_open_box()
+QStringList View::display_open_box_image()
 {
     QFileDialog* file_dialog = new QFileDialog;
     file_dialog->setFileMode(QFileDialog::ExistingFiles);
-    QStringList file_names = file_dialog->getOpenFileNames(this, tr("Open one or more files"), NULL, tr("IMAGES (*.png *.jpg *.jpeg);; VIDEOS (*.avi *.mp4)"));
+    QStringList file_names = file_dialog->getOpenFileNames(this, tr("Open one or more files"), NULL, tr("IMAGES (*.png *.jpg *.jpeg)"));
     delete (file_dialog);
 
-    open_action->setEnabled(false);
     assemble_action->setEnabled(true);
     convert_action->setEnabled(true);
 
-
-    //ATTENTION l'utilisateur peut couiller le système en faisant annuler sans ouvrir de fichier
-
-//    if(sub_windows.size()==0)
-//    {
-//        open_action->setEnabled(false);
-//        assemble_action->setEnabled(true);
-//        convert_action->setEnabled(true);
-//    }
-//    else if(sub_windows.size()-1)
-//    {
-//        open_action->setEnabled(true);
-//        assemble_action->setEnabled(false);
-//        convert_action->setEnabled(false);
-//    }
-
-
     return file_names;
 }
+
+QStringList View::display_open_box_video()
+{
+    QFileDialog* file_dialog = new QFileDialog;
+    file_dialog->setFileMode(QFileDialog::ExistingFiles);
+    QStringList file_names = file_dialog->getOpenFileNames(this, tr("Open one or more files"), NULL, tr("VIDEOS (*.avi *.mp4)"));
+    delete (file_dialog);
+
+    assemble_action->setEnabled(true);
+    convert_action->setEnabled(true);
+
+     return file_names;
+}
+
 
 QString View::display_save_as_box()
 {
@@ -275,7 +300,8 @@ QString View::display_save_as_box()
 
 void View::add_sub_window()
 {
-    QMdiSubWindow* new_sub_window = new QMdiSubWindow;
+    MySubWindows* new_sub_window = new MySubWindows(this, this->controller);
+//    new_sub_window->installEventFilter(close_sub);
     this->main_area->addSubWindow(new_sub_window);
     sub_windows.push_back(new_sub_window);
 }

@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+class MySubWindows;
 class Project;
 class View;
 class Controller;

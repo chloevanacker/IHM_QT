@@ -7,5 +7,7 @@
         <file>icons/save_as.png</file>
         <file>icons/save.png</file>
         <file>icons/undo.png</file>
+        <file>icons/openimage.png</file>
+        <file>icons/openvideo.png</file>
     </qresource>
 </RCC>

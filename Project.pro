@@ -19,7 +19,8 @@ SOURCES += main.cpp\
         project.cpp \
     videosurface.cpp \
     convertimagethread.cpp \
-    convertvideothread.cpp
+    convertvideothread.cpp \
+    mysubwindows.cpp
 
 HEADERS  += view.h \
             model.h \
@@ -29,7 +30,8 @@ HEADERS  += view.h \
             videosurface.h \
     playitem.h \
     convertimagethread.h \
-    convertvideothread.h
+    convertvideothread.h \
+    mysubwindows.h
 
 FORMS    += view.ui
 

@@ -14,7 +14,8 @@ public:
 
 public:
     Controller* controller;
-    void load_file(QString file_name);
+    void load_image_file(QString file_name);
+    void load_video_file(QString file_name);
     void save_file(QString file_name, int index);
     void save_as_file(QString file_name, int index);
 };

@@ -35,7 +35,8 @@ public:
 public:
     /*Declaration of all the functions linked to the actions*/
 
-    void open();
+    void open_image();
+    void open_video();
     void save();
     void save_as();
     void convert_all();
