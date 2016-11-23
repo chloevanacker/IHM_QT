@@ -56,11 +56,9 @@ private:
     QAction* save_as_action;
     QAction* convert_action;
     QAction* assemble_action;
-    QAction* undo_action;
-    QAction* redo_action;
     QAction* help_action;
     QAction* about_action;
-    QAction* new_project_action;
+
     void create_actions();
     void delete_actions();
 
@@ -71,12 +69,8 @@ private slots:
     void save_as();
     void convert_all();
     void assemble();
-    void undo();
-    void redo();
     void help();
     void about();
-    void new_project();
-
 /*Creation of all the menu attributes, of the function that create the main menu, and the one that updates it*/
 private:
     QMenu* file_menu;
@@ -91,7 +85,6 @@ private:
     /*Creation of all the toolbar attributes, of the function that create the main toolbar, and the one that updates it */
     QToolBar* file_tool_bar;
     QToolBar* modification_tool_bar;
-    QToolBar* correction_tool_bar;
     void create_tool_bar();
     //void update_tool_bar();
     void delete_tool_bars();

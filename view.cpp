@@ -53,8 +53,6 @@ void View::delete_actions()
     delete save_as_action;
     delete convert_action;
     delete assemble_action;
-    delete undo_action;
-    delete redo_action;
     delete help_action;
     delete about_action;
 }
@@ -71,14 +69,13 @@ void View::delete_tool_bars()
 {
     delete file_tool_bar;
     delete modification_tool_bar;
-    delete correction_tool_bar;
+
 }
 
 
 void View::create_menu()
 {
     file_menu = menuBar()->addMenu(tr("&File"));
-    file_menu->addAction(new_project_action);
     file_menu->addAction(open_action_image);
     file_menu->addAction(open_action_video);
     file_menu->addAction(save_action);
@@ -87,8 +84,6 @@ void View::create_menu()
     action_menu = menuBar()->addMenu(tr("&Action"));
     action_menu->addAction(convert_action);
     action_menu->addAction(assemble_action);
-    action_menu->addAction(undo_action);
-    action_menu->addAction(redo_action);
 
     help_menu = menuBar()->addMenu(tr("&Help"));
     help_menu->addAction(help_action);
@@ -109,9 +104,6 @@ void View::create_tool_bar()
     modification_tool_bar->addAction(convert_action);
     modification_tool_bar->addAction(assemble_action);
 
-    correction_tool_bar = addToolBar(tr("&Correction"));
-    correction_tool_bar->addAction(undo_action);
-    correction_tool_bar->addAction(redo_action);
 }
 
 void View::create_actions()
@@ -140,14 +132,6 @@ void View::create_actions()
     assemble_action->setStatusTip(tr("Assemble all the open pictures or videos into one"));
     connect(assemble_action, SIGNAL(triggered()), this, SLOT(assemble()));
 
-    undo_action = new QAction(QIcon(":/icons/undo.png"), tr("Undo"), this);
-    undo_action->setStatusTip(tr("Undo the last action"));
-    connect(undo_action, SIGNAL(triggered()), this, SLOT(undo()));
-
-    redo_action = new QAction(QIcon(":/icons/redo.png"), tr("Redo"), this);
-    redo_action->setStatusTip(tr("Redo the last action"));
-    connect(redo_action, SIGNAL(triggered()), this, SLOT(redo()));
-
     help_action = new QAction(QIcon(":/icons/help.png"), tr("Help..."), this);
     help_action->setStatusTip(tr("Open help"));
     connect(help_action, SIGNAL(triggered()), this, SLOT(help()));
@@ -156,9 +140,6 @@ void View::create_actions()
     about_action->setStatusTip(tr("About this application"));
     connect(about_action, SIGNAL(triggered()), this, SLOT(about()));
 
-    new_project_action = new QAction( tr("New Project..."), this);
-    new_project_action->setStatusTip(tr("Create a new project"));
-    connect(new_project_action, SIGNAL(triggered()), this, SLOT(new_project()));
 
 }
 
@@ -216,15 +197,6 @@ void View::assemble()
 
 }
 
-void View::undo()
-{
-    this->controller->undo();
-}
-
-void View::redo()
-{
-    this->controller->redo();
-}
 
 void View::help()
 {
@@ -236,22 +208,6 @@ void View::about()
     this->controller->about();
 }
 
-void View::new_project()
-{
-    QMessageBox::StandardButton reply;
-    reply= QMessageBox::question(this,"New Project","Do you want to create a new project?");
-
-    if(reply==QMessageBox::Yes)
-    {
-        Model* model = new Model;
-        View* view = new View;
-        Controller* controller = new Controller;
-        Project* project = new Project(model, view, controller);
-        project->view->show();
-    }
-
-
-}
 
 void View::display_message_box(QString title, QString content)
 {
