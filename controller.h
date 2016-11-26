@@ -26,7 +26,6 @@ public:
     std::vector<QPixmap*> pixmaps;
     std::vector<QMediaPlayer*> videos;
     std::vector<VideoSurface*> video_surfaces;
-    std::vector<QImage> videos_frames_pictures;
     std::vector <PlayItem> playlist;
     std::vector<ConvertImageThread*> vector_threads_images;
     std::vector<ConvertVideoThread*> vector_threads_videos;

@@ -12,7 +12,7 @@ public:
 public:
 
 
-    explicit ConvertImageThread(QObject *parent, Controller* controller, View* view, int index);
+    explicit ConvertImageThread(QObject *parent, Controller* controller, View* view, QPixmap* pixmap);
 
     void run();
 

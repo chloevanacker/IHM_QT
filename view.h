@@ -48,6 +48,7 @@ public:
 
 
 
+
 /*Declaration of all the actions attributes, and of the function that create these actions */
 private:
     QAction* open_action_image;

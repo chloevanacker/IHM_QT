@@ -1,6 +1,8 @@
 #include "controller.h"
 
 
+//file_names[index].toLower().endsWith(".png") || file_names[index].toLower().endsWith(".jpg") || file_names[index].toLower().endsWith(".jpeg")
+//file_names[index].toLower().endsWith(".avi") || file_names[index].toLower().endsWith(".mp4")
 
 Controller::Controller()
 {
@@ -91,10 +93,8 @@ void Controller::convert_all()
 
         if(file_names[index].toLower().endsWith(".png") || file_names[index].toLower().endsWith(".jpg") || file_names[index].toLower().endsWith(".jpeg"))
         {
-           ConvertImageThread* new_thread_convert_image= new ConvertImageThread(NULL,this,this->view,index);
+           ConvertImageThread* new_thread_convert_image= new ConvertImageThread(NULL,this,this->view,this->pixmaps[index]);
            this->vector_threads_images.push_back(new_thread_convert_image);
-
-           this->vector_threads_images[index]->controller = this;
 
         }
         else if(file_names[index].toLower().endsWith(".avi") || file_names[index].toLower().endsWith(".mp4"))
@@ -137,6 +137,21 @@ void Controller::convert_all()
         }
     }
 
+    for(int index=0; index<number_of_sub_windows; index++)
+    {
+        if(file_names[index].toLower().endsWith(".png") || file_names[index].toLower().endsWith(".jpg") || file_names[index].toLower().endsWith(".jpeg"))
+        {
+            delete this->vector_threads_images[index];
+        }
+        else if(file_names[index].toLower().endsWith(".avi") || file_names[index].toLower().endsWith(".mp4"))
+        {
+            delete this->vector_threads_videos[index];
+        }
+    }
+
+    this->vector_threads_images.clear();
+    this->vector_threads_videos.clear();
+
 
 //    int number_of_sub_windows = this->view->sub_windows.size();
 //    for(int index = 0; index < number_of_sub_windows; index++)
@@ -170,28 +185,35 @@ void Controller::assemble()
 
     if(file_name.toLower().endsWith(".png") || file_name.toLower().endsWith(".jpg") || file_name.toLower().endsWith(".jpeg"))
     {
-        int max_height=this->view->sub_windows.at(0)->pos().ry()+pixmaps.at(0)->height();
-        int max_width=this->view->sub_windows.at(0)->pos().rx()+pixmaps.at(0)->width();
+        QPoint sub_window_position = this->view->sub_windows[0]->pos();
+        int max_height=sub_window_position.ry() + this->pixmaps[0]->height();
+        int max_width=sub_window_position.rx() + this->pixmaps[0]->width();
+
+        int min_height=sub_window_position.ry();
+        int min_width=sub_window_position.rx();
 
         for(unsigned int i=1; i < this->pixmaps.size(); i++)
         {
-            if(this->view->sub_windows.at(i)->pos().ry()+this->pixmaps.at(i)->height()>max_height)
-                max_height=this->view->sub_windows.at(i)->pos().ry()+this->pixmaps.at(i)->height();
+            sub_window_position = this->view->sub_windows[i]->pos();
+            if(sub_window_position.ry()+this->pixmaps.at(i)->height()>max_height)
+            {
+                max_height=sub_window_position.ry()+this->pixmaps.at(i)->height();
+            }
 
-            if(this->view->sub_windows.at(i)->pos().rx()>max_width  || this->view->sub_windows.at(i)->pos().rx()+this->pixmaps.at(i)->width()>max_width)
-                max_width=this->view->sub_windows.at(i)->pos().rx()+this->pixmaps.at(i)->width();
-        }
+            if(sub_window_position.rx()>max_width  || sub_window_position.rx()+this->pixmaps.at(i)->width()>max_width)
+            {
+                max_width=sub_window_position.rx()+this->pixmaps.at(i)->width();
+            }
 
-        int min_height=this->view->sub_windows.at(0)->pos().ry();
-        int min_width=this->view->sub_windows.at(0)->pos().rx();
+            if(sub_window_position.ry()<min_height)
+            {
+                min_height=sub_window_position.ry();
+            }
 
-        for( unsigned int i=1; i < this->pixmaps.size(); i++)
-        {
-            if(this->view->sub_windows.at(i)->pos().ry()<min_height)
-                        min_height=this->view->sub_windows.at(i)->pos().ry();
-
-            if(this->view->sub_windows.at(i)->pos().rx()<min_width)
-                        min_width=this->view->sub_windows.at(i)->pos().rx();
+            if(sub_window_position.rx()<min_width)
+            {
+                min_width=sub_window_position.rx();
+            }
         }
 
         QImage result_image(max_width-min_width, max_height-min_height, QImage::Format_RGB32);
@@ -199,32 +221,35 @@ void Controller::assemble()
 
         painter.begin(&result_image);
 
-        for(unsigned int i=0; i < this->pixmaps.size(); ++i)
+        for(unsigned int i=0; i < this->pixmaps.size(); i++)
         {
-            painter.drawImage(this->view->sub_windows.at(i)->pos().rx()-min_width, this->view->sub_windows.at(i)->pos().ry()-min_height, this->pixmaps.at(i)->toImage(), 0, 0, max_width-min_width, max_height-min_height, Qt::AutoColor);
+            QPoint sub_window_position = this->view->sub_windows[i]->pos();
+            painter.drawImage(sub_window_position.rx()-min_width, sub_window_position.ry()-min_height,
+                              this->pixmaps[i]->toImage(), 0, 0, max_width-min_width, max_height-min_height, Qt::AutoColor);
         }
         
         painter.end();
 
-        QLabel* result_container = new QLabel;
-
-        this->pixmaps.erase(this->pixmaps.begin(), this->pixmaps.begin() + this->pixmaps.size());
-
         for (unsigned int index = 0; index < this->view->sub_windows.size(); index ++)
         {
             this->view->hide_sub_window(index);
+            delete this->view->sub_windows[index];
+            delete this->pixmaps[index];
         }
 
-        this->view->sub_windows.erase(this->view->sub_windows.begin(), this->view->sub_windows.begin() + this->view->sub_windows.size());
+        this->pixmaps.clear();
+        this->view->sub_windows.clear();
+        QPixmap* pixmap = new QPixmap;
+        *pixmap = pixmap->fromImage(result_image);
 
-        QPixmap pixmap = pixmap.fromImage(result_image);
-
-        this->pixmaps.push_back(&pixmap);
+        this->pixmaps.push_back(pixmap);
 
         this->view->add_sub_window();
 
-        result_container->setPixmap(*this->pixmaps[pixmaps.size()-1]);
+        QLabel* result_container = new QLabel;
+        result_container->setPixmap(*this->pixmaps[0]);
         this->view->sub_windows[0]->setWidget(result_container);
+        this->view->sub_windows[0]->setAccessibleName("assemble.png");
 
         this->view->display_sub_window(0);
     }
@@ -265,6 +290,7 @@ void Controller::assemble()
 
         this->view->add_sub_window();
         this->view->sub_windows[0]->setWidget(video_surface->frame_container);
+        this->view->sub_windows[0]->setAccessibleName("assemble.avi");
 
         QSize size = video_surface->frame_container->size();
         this->view->sub_windows[0]->widget()->setFixedSize(size);

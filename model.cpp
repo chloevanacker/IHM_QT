@@ -8,12 +8,12 @@ void Model::load_image_file(QString file_name)
 {
     int index_of_new_sub_window = this->controller->view->sub_windows.size()-1;
 
-        QLabel* picture_container = new QLabel;
-        QPixmap* pixmap = new QPixmap(file_name);
-        this->controller->pixmaps.push_back(pixmap);
-        picture_container->setPixmap(*(this->controller->pixmaps[index_of_new_sub_window]));
-        this->controller->view->sub_windows[index_of_new_sub_window]->setWidget(picture_container);
-        this->controller->view->sub_windows[index_of_new_sub_window]->setAccessibleName(file_name);
+    QLabel* picture_container = new QLabel;
+    QPixmap* pixmap = new QPixmap(file_name);
+    this->controller->pixmaps.push_back(pixmap);
+    picture_container->setPixmap(*(this->controller->pixmaps[index_of_new_sub_window]));
+    this->controller->view->sub_windows[index_of_new_sub_window]->setWidget(picture_container);
+    this->controller->view->sub_windows[index_of_new_sub_window]->setAccessibleName(file_name);
 
 }
 

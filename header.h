@@ -30,6 +30,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define PICTURE 0
+#define VIDEO 1
+
 class MySubWindows;
 class Project;
 class View;

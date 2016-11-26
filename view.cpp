@@ -157,13 +157,11 @@ void View::initial_actions_state()
 void View::open_image()
 {
     this->controller->open_image();
-    open_action_video->setEnabled(false);
 }
 
 void View::open_video()
 {
     this->controller->open_video();
-    open_action_image->setEnabled(false);
 }
 
 
@@ -184,17 +182,17 @@ void View::save_as()
 void View::convert_all()
 {
     this->controller->convert_all();
-    save_action->setEnabled(true);
-    save_as_action->setEnabled(true);
+    this->convert_action->setEnabled(false);
+    this->save_action->setEnabled(true);
+    this->save_as_action->setEnabled(true);
 }
 
 void View::assemble()
 {
     this->controller->assemble();
-    assemble_action->setEnabled(false);
-    save_action->setEnabled(true);
-    save_as_action->setEnabled(true);
-
+    this->assemble_action->setEnabled(false);
+    this->save_action->setEnabled(true);
+    this->save_as_action->setEnabled(true);
 }
 
 
@@ -221,11 +219,21 @@ QStringList View::display_open_box_image()
 {
     QFileDialog* file_dialog = new QFileDialog;
     file_dialog->setFileMode(QFileDialog::ExistingFiles);
-    QStringList file_names = file_dialog->getOpenFileNames(this, tr("Open one or more files"), NULL, tr("IMAGES (*.png *.jpg *.jpeg)"));
+    QStringList file_names = file_dialog->getOpenFileNames(this, tr("Open one or more files"),
+                                                           NULL, tr("IMAGES (*.png *.jpg *.jpeg)"));
     delete (file_dialog);
 
-    assemble_action->setEnabled(true);
-    convert_action->setEnabled(true);
+    if(file_names.isEmpty())
+    {
+        this->initial_actions_state();
+    }
+
+    else
+    {
+        this->open_action_video->setEnabled(false);
+        this->assemble_action->setEnabled(true);
+        this->convert_action->setEnabled(true);
+    }
 
     return file_names;
 }
@@ -237,8 +245,17 @@ QStringList View::display_open_box_video()
     QStringList file_names = file_dialog->getOpenFileNames(this, tr("Open one or more files"), NULL, tr("VIDEOS (*.avi *.mp4)"));
     delete (file_dialog);
 
-    assemble_action->setEnabled(true);
-    convert_action->setEnabled(true);
+    if(file_names.isEmpty())
+    {
+        this->initial_actions_state();
+    }
+
+    else
+    {
+        this->open_action_image->setEnabled(false);
+        this->assemble_action->setEnabled(true);
+        this->convert_action->setEnabled(true);
+    }
 
      return file_names;
 }
@@ -257,9 +274,9 @@ QString View::display_save_as_box()
 void View::add_sub_window()
 {
     MySubWindows* new_sub_window = new MySubWindows(this, this->controller);
-//    new_sub_window->installEventFilter(close_sub);
     this->main_area->addSubWindow(new_sub_window);
-    sub_windows.push_back(new_sub_window);
+    this->sub_windows.push_back(new_sub_window);
+
 }
 
 void View::display_sub_window(int index_of_sub_window)
