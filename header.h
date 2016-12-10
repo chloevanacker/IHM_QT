@@ -1,3 +1,8 @@
+/** \file header.h
+ * \author NICOL Pauline SERVOIN Arnaud VANACKER Chloé
+ * \date 29/11/2016
+ */
+
 #ifndef HEADER_H
 #define HEADER_H
 

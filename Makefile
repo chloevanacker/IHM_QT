@@ -33,7 +33,7 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = Project1.0.0
-DISTDIR = /home/arnaud/projetQT/IHM_QT/.tmp/Project1.0.0
+DISTDIR = /home/nicol-pn/Documents/Cours/QT/GIT/IHM_QT/.tmp/Project1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-rpath-link,/usr/lib/i386-linux-gnu
 LIBS          = $(SUBLIBS) -lQt5MultimediaWidgets -lQt5Multimedia -lQt5Widgets -lQt5Gui -lQt5Network -lQt5Core -lGL -lpthread 
@@ -364,6 +364,7 @@ qrc_resources.cpp: resources.qrc \
 		icons/open.png \
 		icons/undo.png \
 		icons/openvideo.png \
+		icons/LOGO.png \
 		icons/save_as.png \
 		icons/redo.png \
 		icons/assemble.png
@@ -383,7 +384,7 @@ moc_view.cpp: controller.h \
 		convertimagethread.h \
 		convertvideothread.h \
 		view.h
-	/usr/lib/i386-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/i386-linux-gnu/qt5/mkspecs/linux-g++ -I/home/arnaud/projetQT/IHM_QT -I/usr/include/i386-linux-gnu/qt5 -I/usr/include/i386-linux-gnu/qt5/QtMultimediaWidgets -I/usr/include/i386-linux-gnu/qt5/QtMultimedia -I/usr/include/i386-linux-gnu/qt5/QtWidgets -I/usr/include/i386-linux-gnu/qt5/QtGui -I/usr/include/i386-linux-gnu/qt5/QtNetwork -I/usr/include/i386-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/i386-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/i686-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/i686-linux-gnu/5/include-fixed -I/usr/include/i386-linux-gnu -I/usr/include view.h -o moc_view.cpp
+	/usr/lib/i386-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/i386-linux-gnu/qt5/mkspecs/linux-g++ -I/home/nicol-pn/Documents/Cours/QT/GIT/IHM_QT -I/usr/include/i386-linux-gnu/qt5 -I/usr/include/i386-linux-gnu/qt5/QtMultimediaWidgets -I/usr/include/i386-linux-gnu/qt5/QtMultimedia -I/usr/include/i386-linux-gnu/qt5/QtWidgets -I/usr/include/i386-linux-gnu/qt5/QtGui -I/usr/include/i386-linux-gnu/qt5/QtNetwork -I/usr/include/i386-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/i386-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/i686-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/i686-linux-gnu/5/include-fixed -I/usr/include/i386-linux-gnu -I/usr/include view.h -o moc_view.cpp
 
 moc_controller.cpp: model.h \
 		view.h \
@@ -396,7 +397,7 @@ moc_controller.cpp: model.h \
 		convertvideothread.h \
 		mysubwindows.h \
 		controller.h
-	/usr/lib/i386-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/i386-linux-gnu/qt5/mkspecs/linux-g++ -I/home/arnaud/projetQT/IHM_QT -I/usr/include/i386-linux-gnu/qt5 -I/usr/include/i386-linux-gnu/qt5/QtMultimediaWidgets -I/usr/include/i386-linux-gnu/qt5/QtMultimedia -I/usr/include/i386-linux-gnu/qt5/QtWidgets -I/usr/include/i386-linux-gnu/qt5/QtGui -I/usr/include/i386-linux-gnu/qt5/QtNetwork -I/usr/include/i386-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/i386-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/i686-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/i686-linux-gnu/5/include-fixed -I/usr/include/i386-linux-gnu -I/usr/include controller.h -o moc_controller.cpp
+	/usr/lib/i386-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/i386-linux-gnu/qt5/mkspecs/linux-g++ -I/home/nicol-pn/Documents/Cours/QT/GIT/IHM_QT -I/usr/include/i386-linux-gnu/qt5 -I/usr/include/i386-linux-gnu/qt5/QtMultimediaWidgets -I/usr/include/i386-linux-gnu/qt5/QtMultimedia -I/usr/include/i386-linux-gnu/qt5/QtWidgets -I/usr/include/i386-linux-gnu/qt5/QtGui -I/usr/include/i386-linux-gnu/qt5/QtNetwork -I/usr/include/i386-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/i386-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/i686-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/i686-linux-gnu/5/include-fixed -I/usr/include/i386-linux-gnu -I/usr/include controller.h -o moc_controller.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:

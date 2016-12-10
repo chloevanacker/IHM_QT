@@ -9,5 +9,6 @@
         <file>icons/undo.png</file>
         <file>icons/openimage.png</file>
         <file>icons/openvideo.png</file>
+        <file>icons/LOGO.png</file>
     </qresource>
 </RCC>
