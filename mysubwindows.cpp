@@ -42,6 +42,7 @@ void MySubWindows::closeEvent(QCloseEvent *)
 
             //On libère la mémoire et supprime la sub window de son vecteur
 
+              this->view->hide_sub_window(index);
               //delete this->view->sub_windows[index];
               this->view->sub_windows.erase(this->view->sub_windows.begin()+index);
               break;
@@ -53,4 +54,11 @@ void MySubWindows::closeEvent(QCloseEvent *)
     {
         this->view->initial_actions_state();
     }
+
+    /*qDebug() << "POST SUPPRESSION : ";
+    qDebug() << "Nbre sub windows : " << this->view->sub_windows.size();
+    qDebug() << "Nbre pixmap : " << this->controller->pixmaps.size();
+    qDebug() << "Nbre video player : " << this->controller->videos.size();
+    qDebug() << "Nbre video surface : " << this->controller->video_surfaces.size();*/
+
 }
